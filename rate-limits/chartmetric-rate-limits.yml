@@ -1,0 +1,62 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Chartmetric
+providerId: chartmetric
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- Music
+- Analytics
+- Artist Intelligence
+- Streaming
+- Charts
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  Chartmetric enforces per-account request-rate limits on its REST API
+  expressed as requests per second (RPS). Entry-level Developer API access is
+  reported at 1 request per second, with higher ceilings (up to ~25 requests
+  per second documented) available under scaled and enterprise agreements.
+  Access tokens are short-lived (1 hour) and must be refreshed via POST
+  /api/token; the same access token should be reused across calls until it
+  expires rather than minted per request. Specific per-account values are not
+  reconciled in this artifact.
+notes: >-
+  Confirm the exact per-tier RPS ceiling, any daily caps, and token-refresh
+  guidance directly with Chartmetric during reconciliation; reported figures
+  come from the developer API page and third-party listings.
+sources:
+- https://chartmetric.com/features/developer-api
+- https://apidocs.chartmetric.com/
+- https://help.chartmetric.com/en/articles/6585518-how-do-the-api-tokens-work
+responseCodes:
+  throttled: 429
+limits:
+- name: Requests Per Second (entry)
+  scope: account
+  metric: requests
+  limit: 1
+  notes: Reported entry-level Developer API rate; varies by plan.
+- name: Requests Per Second (scaled)
+  scope: account
+  metric: requests
+  limit: 25
+  notes: Documented upper rate for scaled / enterprise access; negotiated.
+- name: Access Token Lifetime
+  scope: account
+  metric: seconds
+  limit: 3600
+  notes: Access tokens expire after 1 hour; refresh via POST /api/token and reuse until expiry.
+policies:
+- name: Tiered Limits
+  description: Request-rate ceilings increase from entry (1 RPS) to scaled / enterprise (up to ~25 RPS) under negotiated agreements.
+- name: Token Reuse
+  description: Mint one access token from the refresh token and reuse it across requests until it expires; do not request a new token per call.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter on HTTP 429 responses and honor any Retry-After header.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,136 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Chartmetric
+providerId: chartmetric
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- Music
+- Analytics
+- Artist Intelligence
+- Streaming
+- Charts
+- Plans
+description: >-
+  Chartmetric's Developer API is sold through a sales-led model layered on top
+  of a Chartmetric subscription. Published third-party references place entry
+  API access around $350 per user per month with a 1 request-per-second limit,
+  scaling to higher request rates and seats under negotiated agreements. Team
+  Access, Data Shares (Snowflake, Amazon S3, Google Cloud Storage), the MCP
+  server, and customized services are quoted directly by Chartmetric. Exact,
+  current pricing is not published on a self-serve page and is not reconciled
+  in this artifact.
+notes: >-
+  Pricing figures here are drawn from third-party listings and may be out of
+  date. Confirm current API tiers, seat pricing, request-rate ceilings, and
+  data-share costs directly with Chartmetric sales during reconciliation.
+sources:
+- https://chartmetric.com/features/developer-api
+- https://chartmetric.com/contact-us/developer-api
+- https://chartmetric.com/pricing
+- https://apidocs.chartmetric.com/
+plans:
+- id: chartmetric-api-standard
+  name: Developer API
+  type: subscription
+  description: >-
+    Seat-based REST API access to the Chartmetric music analytics dataset,
+    bundled with a Chartmetric subscription. Entry access is reported around
+    $350 per user per month with a 1 request-per-second rate limit.
+  entries:
+  - label: Developer API Seat
+    name: api_seat
+    type: flat
+    metric: seats
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from ~$350 per user / month (contact sales)
+    userMultiplied: true
+  - label: Request Rate (entry)
+    name: request_rate
+    type: usage
+    metric: requests
+    limit: 1
+    timeFrame: second
+    geo: global
+    unit: 1
+    price: included; higher rates negotiated
+    userMultiplied: false
+  elements:
+  - name: Artists
+  - name: Tracks
+  - name: Albums
+  - name: Playlists
+  - name: Charts
+  - name: Stats and Metrics
+  - name: Search
+- id: chartmetric-api-scale
+  name: Scaled API Access
+  type: enterprise
+  description: >-
+    Higher request rates (up to ~25 requests per second documented), additional
+    seats, Team Access, and dedicated support under a negotiated agreement.
+  entries:
+  - label: Scaled Request Rate
+    name: scaled_request_rate
+    type: usage
+    metric: requests
+    limit: 25
+    timeFrame: second
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Higher Request Rate
+  - name: Team Access
+  - name: Dedicated Support
+- id: chartmetric-data-shares
+  name: Data Shares
+  type: enterprise
+  description: >-
+    Bulk delivery of Chartmetric data directly into a cloud data warehouse
+    (Snowflake, Amazon S3, or Google Cloud Storage) for large-scale analytics,
+    quoted per engagement.
+  entries:
+  - label: Data Share Agreement
+    name: data_share
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Snowflake
+  - name: Amazon S3
+  - name: Google Cloud Storage
+- id: chartmetric-mcp
+  name: MCP Server
+  type: enterprise
+  description: >-
+    Model Context Protocol server enabling natural-language access to
+    Chartmetric data in AI workflows, available alongside Developer API access.
+  entries:
+  - label: MCP Access
+    name: mcp_access
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Natural Language Queries
+  - name: AI Workflow Integration
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,1304 @@
+{
+  "item": [
+    {
+      "id": "3d3ef3a2-13af-4285-880c-ac6b5b881772",
+      "name": "Authentication",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d78e5622-0cc2-483c-b344-0320a7975cc8",
+          "name": "Mint an access token from a refresh token.",
+          "request": {
+            "name": "Mint an access token from a refresh token.",
+            "description": {
+              "content": "Exchange a long-lived refresh token for a 1-hour Bearer access token.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshtoken\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "38dab4f6-a33d-4cbe-affd-d567477d505c",
+      "name": "Search",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "379a8cdb-78a5-48e8-89da-66580bd70ee6",
+          "name": "Search artists, tracks, albums, playlists, and curators.",
+          "request": {
+            "name": "Search artists, tracks, albums, playlists, and curators.",
+            "description": {
+              "content": "Unified free-text search returning Chartmetric IDs by entity type.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "<string>"
+                },
+                {
+                  "key": "type",
+                  "value": "artists"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "5a05a63d-beff-4fac-87c8-61fe672aa1c3",
+      "name": "Artists",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d78b5e34-5bd3-4faf-b555-7949c24dfc0f",
+          "name": "Get artist metadata.",
+          "request": {
+            "name": "Get artist metadata.",
+            "description": {
+              "content": "Get artist metadata.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5df1b779-18ca-400f-af0e-bc1a5d3172b2",
+          "name": "Get artist stats by data source.",
+          "request": {
+            "name": "Get artist stats by data source.",
+            "description": {
+              "content": "Time-series streaming/social stats for an artist from a data source.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "stat",
+                ":source"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "source",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "50735331-fb1f-455c-b72c-87827aab9889",
+          "name": "Get artist streaming and social URLs.",
+          "request": {
+            "name": "Get artist streaming and social URLs.",
+            "description": {
+              "content": "Get artist streaming and social URLs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "urls"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ad9c59cd-87dd-49c4-b635-a3e957323546",
+          "name": "Get related artists.",
+          "request": {
+            "name": "Get related artists.",
+            "description": {
+              "content": "Get related artists.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "relatedartists"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "465a96ed-58e1-46cc-b318-6a8460c0dd49",
+          "name": "Get where-people-listen geography.",
+          "request": {
+            "name": "Get where-people-listen geography.",
+            "description": {
+              "content": "Top cities and countries where the artist's audience listens.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "where-people-listen"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7f8c43af-f9cd-45d4-bf47-aec2dbb915a7",
+          "name": "Get artist tracks.",
+          "request": {
+            "name": "Get artist tracks.",
+            "description": {
+              "content": "Get artist tracks.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "tracks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "88d35e5d-9d2b-4447-9d56-288d30f9c5ac",
+          "name": "Get artist albums.",
+          "request": {
+            "name": "Get artist albums.",
+            "description": {
+              "content": "Get artist albums.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                "albums"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fb0d2be1-db87-4644-b6f2-45a1d74e69aa",
+          "name": "Get artist playlist placements.",
+          "request": {
+            "name": "Get artist playlist placements.",
+            "description": {
+              "content": "Playlists the artist's catalog appears on for a source and status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "artist",
+                ":id",
+                ":source",
+                ":status",
+                "playlists"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "source",
+                  "value": "<string>"
+                },
+                {
+                  "key": "status",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "4e78fed5-790c-4e8a-9880-baf28305dd8c",
+      "name": "Tracks",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "4231bc99-4325-4ae1-a314-9d59aebd327d",
+          "name": "Get track metadata.",
+          "request": {
+            "name": "Get track metadata.",
+            "description": {
+              "content": "Get track metadata.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "track",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "068a1b64-ac3f-4bea-9786-68c17aca8a26",
+          "name": "Get track stats by platform.",
+          "request": {
+            "name": "Get track stats by platform.",
+            "description": {
+              "content": "Time-series stats for a track on a platform.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "track",
+                ":id",
+                ":platform",
+                "stats"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1f3fbd4d-4f92-4286-81b9-e2d7fe9852e2",
+          "name": "Get track chart history.",
+          "request": {
+            "name": "Get track chart history.",
+            "description": {
+              "content": "Chart appearances for a track.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "track",
+                ":id",
+                ":chartType",
+                "charts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "chartType",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ef6b843e-4a29-4fda-b2b6-b53dfe807240",
+          "name": "Get track playlist placements.",
+          "request": {
+            "name": "Get track playlist placements.",
+            "description": {
+              "content": "Playlists a track appears on for a platform and status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "track",
+                ":id",
+                ":platform",
+                ":status",
+                "playlists"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                },
+                {
+                  "key": "status",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "6cbdcb6f-6aaf-4489-8a81-25a88bde763f",
+      "name": "Albums",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "4888a563-805a-4c65-bb7f-8477d380d253",
+          "name": "Get album metadata.",
+          "request": {
+            "name": "Get album metadata.",
+            "description": {
+              "content": "Get album metadata.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "album",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dc8ab3c5-7b05-4d49-bdc1-5266d173ba65",
+          "name": "Get album tracks.",
+          "request": {
+            "name": "Get album tracks.",
+            "description": {
+              "content": "Get album tracks.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "album",
+                ":id",
+                "tracks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8669a171-6ebf-4452-b41e-db3d0794c8f8",
+          "name": "Get album followers by source.",
+          "request": {
+            "name": "Get album followers by source.",
+            "description": {
+              "content": "Follower time series for an album on a source.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "album",
+                ":id",
+                ":source",
+                "followers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "source",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c54f09c7-7144-48d1-b63f-2990abbad417",
+          "name": "Get album playlist placements.",
+          "request": {
+            "name": "Get album playlist placements.",
+            "description": {
+              "content": "Playlists an album appears on for a source and status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "album",
+                ":id",
+                ":source",
+                ":status",
+                "playlists"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "source",
+                  "value": "<string>"
+                },
+                {
+                  "key": "status",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "cc5a4230-6406-4303-be9b-15285c9a3d07",
+      "name": "Playlists",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f4209f08-525a-4e5b-8cdd-25a09abdc015",
+          "name": "Get playlist metadata.",
+          "request": {
+            "name": "Get playlist metadata.",
+            "description": {
+              "content": "Get playlist metadata.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "playlist",
+                ":platform",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                },
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e1b94aac-1526-461f-92b3-5aa32c21b853",
+          "name": "Get playlist tracks.",
+          "request": {
+            "name": "Get playlist tracks.",
+            "description": {
+              "content": "Current or historical track listing for a playlist.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "playlist",
+                ":platform",
+                ":id",
+                ":span",
+                "tracks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                },
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "span",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b3864c70-bf6d-4d6a-9b35-cabb79877839",
+          "name": "Get playlist snapshot.",
+          "request": {
+            "name": "Get playlist snapshot.",
+            "description": {
+              "content": "Point-in-time snapshot of a playlist.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "playlist",
+                ":platform",
+                ":id",
+                "snapshot"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                },
+                {
+                  "key": "id",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b8ffc2c3-aa84-4157-b04e-b40af9af64eb",
+          "name": "List playlists by platform.",
+          "request": {
+            "name": "List playlists by platform.",
+            "description": {
+              "content": "List playlists tracked for a platform.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "playlist",
+                ":platform",
+                "lists"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "fbb6f5d6-133b-4dc9-9034-d66d486ce8c7",
+      "name": "Charts",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3751ebdc-94a2-4120-ac10-adadd9c57e23",
+          "name": "Get platform charts.",
+          "request": {
+            "name": "Get platform charts.",
+            "description": {
+              "content": "Chart rankings for a platform.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "charts",
+                ":platform"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-06-21"
+                },
+                {
+                  "key": "country_code",
+                  "value": "US"
+                },
+                {
+                  "key": "type",
+                  "value": "streams"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "platform",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "103d3b67-74dc-4c72-99b7-cb6693ae8698",
+          "name": "Get artist Chartmetric Score ranking.",
+          "request": {
+            "name": "Get artist Chartmetric Score ranking.",
+            "description": {
+              "content": "Chartmetric Score (cm-score) ranking history for an artist.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "charts",
+                "artist",
+                ":id",
+                ":chartType",
+                "cm-score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "chartType",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "542f4693-50f5-4605-9cba-24a1935271a2",
+          "name": "Get track Chartmetric Score ranking.",
+          "request": {
+            "name": "Get track Chartmetric Score ranking.",
+            "description": {
+              "content": "Chartmetric Score (cm-score) ranking history for a track.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "charts",
+                "track",
+                ":id",
+                ":chartType",
+                "cm-score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "chartType",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cb54aaa8-02be-41b7-9223-8fabe268f0f2",
+          "name": "Get album Chartmetric Score ranking.",
+          "request": {
+            "name": "Get album Chartmetric Score ranking.",
+            "description": {
+              "content": "Chartmetric Score (cm-score) ranking history for an album.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "charts",
+                "album",
+                ":id",
+                ":chartType",
+                "cm-score"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "chartType",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.chartmetric.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "dc8193d4-e72f-4eee-add8-5591a957ebb1",
+    "name": "Chartmetric API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for the Chartmetric music analytics and artist-intelligence platform.\n\nContact Support:\n Name: Chartmetric Support\n Email: hi@chartmetric.com",
+      "type": "text/plain"
+    }
+  }
+}

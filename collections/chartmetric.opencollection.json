@@ -1,0 +1,362 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Mint an access token from a refresh token.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chartmetric.com/api/token",
+            "body": {
+              "type": "json",
+              "data": "{\"refreshtoken\":\"<string>\"}"
+            }
+          },
+          "docs": "Exchange a long-lived refresh token for a 1-hour Bearer access token."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search artists, tracks, albums, playlists, and curators.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/search?q=<string>"
+          },
+          "docs": "Unified free-text search returning Chartmetric IDs by entity type."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Artists",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get artist metadata.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}"
+          },
+          "docs": "Get artist metadata."
+        },
+        {
+          "info": {
+            "name": "Get artist stats by data source.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/stat/{source}"
+          },
+          "docs": "Time-series streaming/social stats for an artist from a data source."
+        },
+        {
+          "info": {
+            "name": "Get artist streaming and social URLs.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/urls"
+          },
+          "docs": "Get artist streaming and social URLs."
+        },
+        {
+          "info": {
+            "name": "Get related artists.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/relatedartists"
+          },
+          "docs": "Get related artists."
+        },
+        {
+          "info": {
+            "name": "Get where-people-listen geography.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/where-people-listen"
+          },
+          "docs": "Top cities and countries where the artist's audience listens."
+        },
+        {
+          "info": {
+            "name": "Get artist tracks.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/tracks"
+          },
+          "docs": "Get artist tracks."
+        },
+        {
+          "info": {
+            "name": "Get artist albums.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/albums"
+          },
+          "docs": "Get artist albums."
+        },
+        {
+          "info": {
+            "name": "Get artist playlist placements.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/{id}/{source}/{status}/playlists"
+          },
+          "docs": "Playlists the artist's catalog appears on for a source and status."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Tracks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get track metadata.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/{id}"
+          },
+          "docs": "Get track metadata."
+        },
+        {
+          "info": {
+            "name": "Get track stats by platform.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/{id}/{platform}/stats"
+          },
+          "docs": "Time-series stats for a track on a platform."
+        },
+        {
+          "info": {
+            "name": "Get track chart history.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/{id}/{chartType}/charts"
+          },
+          "docs": "Chart appearances for a track."
+        },
+        {
+          "info": {
+            "name": "Get track playlist placements.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/{id}/{platform}/{status}/playlists"
+          },
+          "docs": "Playlists a track appears on for a platform and status."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Albums",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get album metadata.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/{id}"
+          },
+          "docs": "Get album metadata."
+        },
+        {
+          "info": {
+            "name": "Get album tracks.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/{id}/tracks"
+          },
+          "docs": "Get album tracks."
+        },
+        {
+          "info": {
+            "name": "Get album followers by source.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/{id}/{source}/followers"
+          },
+          "docs": "Follower time series for an album on a source."
+        },
+        {
+          "info": {
+            "name": "Get album playlist placements.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/{id}/{source}/{status}/playlists"
+          },
+          "docs": "Playlists an album appears on for a source and status."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Playlists",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get playlist metadata.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/{platform}/{id}"
+          },
+          "docs": "Get playlist metadata."
+        },
+        {
+          "info": {
+            "name": "Get playlist tracks.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/{platform}/{id}/{span}/tracks"
+          },
+          "docs": "Current or historical track listing for a playlist."
+        },
+        {
+          "info": {
+            "name": "Get playlist snapshot.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/{platform}/{id}/snapshot"
+          },
+          "docs": "Point-in-time snapshot of a playlist."
+        },
+        {
+          "info": {
+            "name": "List playlists by platform.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/{platform}/lists"
+          },
+          "docs": "List playlists tracked for a platform."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Charts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get platform charts.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/{platform}"
+          },
+          "docs": "Chart rankings for a platform (spotify, applemusic, youtube, shazam, itunes, deezer, soundcloud, beatport, amazon, qq)."
+        },
+        {
+          "info": {
+            "name": "Get artist Chartmetric Score ranking.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/artist/{id}/{chartType}/cm-score"
+          },
+          "docs": "Chartmetric Score (cm-score) ranking history for an artist."
+        },
+        {
+          "info": {
+            "name": "Get track Chartmetric Score ranking.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/track/{id}/{chartType}/cm-score"
+          },
+          "docs": "Chartmetric Score (cm-score) ranking history for a track."
+        },
+        {
+          "info": {
+            "name": "Get album Chartmetric Score ranking.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/album/{id}/{chartType}/cm-score"
+          },
+          "docs": "Chartmetric Score (cm-score) ranking history for an album."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,198 @@
+aid: chartmetric
+url: https://raw.githubusercontent.com/api-evangelist/chartmetric/refs/heads/main/apis.yml
+name: Chartmetric
+kind: company
+description: Chartmetric is a music analytics and artist-intelligence platform. Its
+  REST API exposes the company's catalog of artists, tracks, albums, playlists, and
+  charts along with cross-platform streaming, social, and radio statistics across
+  Spotify, Apple Music, YouTube, TikTok, Instagram, and more, plus a unified search
+  endpoint.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Music
+- Analytics
+- Artist Intelligence
+- Streaming
+- Charts
+created: '2026-06-21'
+modified: '2026-06-21'
+specificationVersion: '0.19'
+apis:
+- aid: chartmetric:artists
+  name: Chartmetric Artists API
+  tags:
+  - Artists
+  - Metadata
+  - Stats
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Artist metadata, cross-platform stats, related artists, where-people-listen
+    geography, artist tracks and albums, playlist placements, and ID resolution for
+    artists tracked by Chartmetric.
+- aid: chartmetric:tracks
+  name: Chartmetric Tracks API
+  tags:
+  - Tracks
+  - Metadata
+  - Stats
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Track metadata, per-platform streaming stats, chart history, playlist
+    placement and snapshots, and ID resolution for tracks across Spotify, Apple Music,
+    YouTube, and other platforms.
+- aid: chartmetric:albums
+  name: Chartmetric Albums API
+  tags:
+  - Albums
+  - Metadata
+  - Stats
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Album metadata, album tracks, per-platform follower and chart data,
+    playlist placements, and ID resolution for albums tracked by Chartmetric.
+- aid: chartmetric:playlists
+  name: Chartmetric Playlists API
+  tags:
+  - Playlists
+  - Curators
+  - Tracks
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Playlist metadata, current and historical track listings, playlist
+    snapshots, evolution over time, and per-platform playlist lists across Spotify,
+    Apple Music, Deezer, and Amazon.
+- aid: chartmetric:charts
+  name: Chartmetric Charts API
+  tags:
+  - Charts
+  - Rankings
+  - Platforms
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Platform chart rankings across Spotify, Apple Music, YouTube, Shazam,
+    iTunes, Deezer, SoundCloud, Beatport, Amazon, and QQ, plus Chartmetric Score (cm-score)
+    rankings for artists, tracks, and albums.
+- aid: chartmetric:stats-metrics
+  name: Chartmetric Stats and Metrics API
+  tags:
+  - Stats
+  - Metrics
+  - Streaming
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Time-series streaming and social statistics for artists, tracks, and
+    albums by data source (Spotify, Apple Music, YouTube, TikTok, Instagram, and others),
+    including follower counts, listeners, and engagement metrics.
+- aid: chartmetric:search
+  name: Chartmetric Search API
+  tags:
+  - Search
+  - Discovery
+  - Entities
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  properties:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+  - url: openapi/chartmetric-openapi.yml
+    type: OpenAPI
+  - url: collections/chartmetric.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chartmetric.opencollection.json
+    type: OpenCollection
+  description: Unified search across artists, tracks, albums, playlists, curators,
+    and other entities by free-text query, returning Chartmetric IDs for follow-on
+    metadata and stats lookups.
+common:
+- type: GitHubOrganization
+  url: https://github.com/chartmetric
+- type: LinkedIn
+  url: https://www.linkedin.com/company/chartmetric
+- type: Website
+  url: https://www.chartmetric.com
+- type: Documentation
+  url: https://apidocs.chartmetric.com/
+- type: Plans
+  url: plans/chartmetric-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/chartmetric-rate-limits.yml
+- type: FinOps
+  url: finops/chartmetric-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

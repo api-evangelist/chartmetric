@@ -1,0 +1,92 @@
+aid: chartmetric
+name: Chartmetric
+review:
+  question: Does Chartmetric expose a documented public WebSocket API?
+  answer: false
+  date: '2026-06-21'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. Chartmetric's Developer API is a
+    synchronous request/response REST API over HTTPS. No Server-Sent Events
+    (SSE) stream and no WebSocket surface is documented, so there is no
+    event-driven or streaming transport to model under the current API
+    Evangelist AsyncAPI scope.
+findings:
+  summary: |
+    Chartmetric does not publish a documented public WebSocket API. The
+    Developer API is a REST (HTTPS) interface rooted at
+    https://api.chartmetric.com/api. Authentication is a Bearer access token
+    minted by POSTing a long-lived refresh token to /api/token; the access
+    token expires after 1 hour. All documented surfaces - artists, tracks,
+    albums, playlists, charts, stats/metrics, and search - are synchronous
+    GET requests returning JSON. Bulk/streaming data delivery is offered
+    out-of-band via Data Shares into cloud warehouses (Snowflake, Amazon S3,
+    Google Cloud Storage) and via an MCP server, neither of which is a
+    WebSocket API. No realtime, bidirectional, or push (ws:// or wss://)
+    endpoint is documented.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.chartmetric.com/api
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in the Chartmetric API reference or developer materials as of the review date.
+    - protocol: SSE
+      scheme: https
+      documented: false
+      note: No Server-Sent Events streaming surface is documented.
+  authentication:
+    type: Bearer
+    tokenEndpoint: POST https://api.chartmetric.com/api/token
+    note: Exchange a long-lived refresh token for a 1-hour access token; reuse the access token across requests until it expires.
+  endpointsConfirmedRest:
+    - POST https://api.chartmetric.com/api/token
+    - GET  https://api.chartmetric.com/api/search
+    - GET  https://api.chartmetric.com/api/artist/{id}
+    - GET  https://api.chartmetric.com/api/artist/{id}/stat/{source}
+    - GET  https://api.chartmetric.com/api/artist/{id}/urls
+    - GET  https://api.chartmetric.com/api/artist/{id}/relatedartists
+    - GET  https://api.chartmetric.com/api/artist/{id}/where-people-listen
+    - GET  https://api.chartmetric.com/api/artist/{id}/tracks
+    - GET  https://api.chartmetric.com/api/artist/{id}/albums
+    - GET  https://api.chartmetric.com/api/artist/{id}/{source}/{status}/playlists
+    - GET  https://api.chartmetric.com/api/track/{id}
+    - GET  https://api.chartmetric.com/api/track/{id}/{platform}/stats
+    - GET  https://api.chartmetric.com/api/track/{id}/{chartType}/charts
+    - GET  https://api.chartmetric.com/api/track/{id}/{platform}/{status}/playlists
+    - GET  https://api.chartmetric.com/api/album/{id}
+    - GET  https://api.chartmetric.com/api/album/{id}/tracks
+    - GET  https://api.chartmetric.com/api/album/{id}/{source}/followers
+    - GET  https://api.chartmetric.com/api/album/{id}/{source}/{status}/playlists
+    - GET  https://api.chartmetric.com/api/playlist/{platform}/{id}
+    - GET  https://api.chartmetric.com/api/playlist/{platform}/{id}/{span}/tracks
+    - GET  https://api.chartmetric.com/api/playlist/{platform}/{id}/snapshot
+    - GET  https://api.chartmetric.com/api/playlist/{platform}/lists
+    - GET  https://api.chartmetric.com/api/charts/{platform}
+    - GET  https://api.chartmetric.com/api/charts/artist/{id}/{chartType}/cm-score
+    - GET  https://api.chartmetric.com/api/charts/track/{id}/{chartType}/cm-score
+    - GET  https://api.chartmetric.com/api/charts/album/{id}/{chartType}/cm-score
+sources:
+  - url: https://apidocs.chartmetric.com/
+    type: Documentation
+    note: Quickstart documents REST base URL https://api.chartmetric.com and the refresh-token to access-token exchange; no WebSocket mentioned.
+  - url: https://api.chartmetric.com/apidoc/
+    type: APIReference
+    note: Full endpoint reference; all documented endpoints are HTTPS REST.
+  - url: https://chartmetric.com/features/developer-api
+    type: Documentation
+    note: Describes REST API, MCP server, and Data Shares (Snowflake/S3/GCS) as the integration paths; none is a WebSocket API.
+  - url: https://help.chartmetric.com/en/articles/6585518-how-do-the-api-tokens-work
+    type: Documentation
+    note: Confirms 1-hour access tokens minted from a long-lived refresh token via POST /api/token.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket or SSE protocol surface exists, so no AsyncAPI document was
+    authored. The apis.json (apis.yml) catalog models the seven REST API
+    surfaces (Artists, Tracks, Albums, Playlists, Charts, Stats/Metrics,
+    Search) with a single shared OpenAPI definition.
