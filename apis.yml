@@ -179,6 +179,10 @@ apis:
     and other entities by free-text query, returning Chartmetric IDs for follow-on
     metadata and stats lookups.
 common:
+- type: DomainSecurity
+  url: security/chartmetric-domain-security.yml
+- type: Authentication
+  url: authentication/chartmetric-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/chartmetric
 - type: LinkedIn
@@ -193,6 +197,8 @@ common:
   url: rate-limits/chartmetric-rate-limits.yml
 - type: FinOps
   url: finops/chartmetric-finops.yml
+- url: https://hmc.chartmetric.com/feed
+  type: Blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
