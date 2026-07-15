@@ -179,6 +179,8 @@ apis:
     and other entities by free-text query, returning Chartmetric IDs for follow-on
     metadata and stats lookups.
 common:
+- type: AgenticAccess
+  url: agentic-access/chartmetric-agentic-access.yml
 - type: DomainSecurity
   url: security/chartmetric-domain-security.yml
 - type: Authentication
