@@ -1,0 +1,189 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric Albums Playlists API
+  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+- url: https://api.chartmetric.com/api
+  description: Chartmetric production API
+security:
+- bearerAuth: []
+tags:
+- name: Playlists
+  description: Playlist metadata, track listings, snapshots, and evolution.
+paths:
+  /playlist/{platform}/{id}:
+    get:
+      operationId: getPlaylist
+      tags:
+      - Playlists
+      summary: Get playlist metadata
+      parameters:
+      - $ref: '#/components/parameters/Platform'
+      - $ref: '#/components/parameters/PlaylistId'
+      responses:
+        '200':
+          description: Playlist metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /playlist/{platform}/{id}/{span}/tracks:
+    get:
+      operationId: getPlaylistTracks
+      tags:
+      - Playlists
+      summary: Get playlist tracks
+      description: Current or historical track listing for a playlist over a given span (for example current, past).
+      parameters:
+      - $ref: '#/components/parameters/Platform'
+      - $ref: '#/components/parameters/PlaylistId'
+      - name: span
+        in: path
+        required: true
+        description: Time span of the track listing (for example current, past).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tracks on the playlist for the given span.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /playlist/{platform}/{id}/snapshot:
+    get:
+      operationId: getPlaylistSnapshot
+      tags:
+      - Playlists
+      summary: Get playlist snapshot
+      parameters:
+      - $ref: '#/components/parameters/Platform'
+      - $ref: '#/components/parameters/PlaylistId'
+      responses:
+        '200':
+          description: A point-in-time snapshot of the playlist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /playlist/{platform}/lists:
+    get:
+      operationId: getPlaylistLists
+      tags:
+      - Playlists
+      summary: List playlists by platform
+      parameters:
+      - $ref: '#/components/parameters/Platform'
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: A list of playlists tracked for the platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric playlist ID.
+        name:
+          type: string
+        platform:
+          type: string
+        followers:
+          type: integer
+        owner_name:
+          type: string
+        num_track:
+          type: integer
+    PlaylistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Playlist'
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    PlaylistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric playlist ID.
+      schema:
+        type: integer
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.

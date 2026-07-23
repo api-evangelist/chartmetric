@@ -1,0 +1,88 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric Albums Authentication API
+  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+- url: https://api.chartmetric.com/api
+  description: Chartmetric production API
+security:
+- bearerAuth: []
+tags:
+- name: Authentication
+  description: Exchange a refresh token for a short-lived access token.
+paths:
+  /token:
+    post:
+      operationId: createToken
+      tags:
+      - Authentication
+      summary: Mint an access token
+      description: Exchange a long-lived refresh token for a short-lived (1 hour) access token. Reuse the access token across requests until it expires.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: An access token and its expiration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Short-lived Bearer access token.
+        expires_in:
+          type: integer
+          description: Token lifetime in seconds (3600).
+          example: 3600
+        scope:
+          type: string
+        refresh_token:
+          type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
+    TokenRequest:
+      type: object
+      required:
+      - refreshtoken
+      properties:
+        refreshtoken:
+          type: string
+          description: Long-lived refresh token issued by Chartmetric.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.

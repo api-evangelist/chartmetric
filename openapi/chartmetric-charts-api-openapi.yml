@@ -1,0 +1,191 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric Albums Charts API
+  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+- url: https://api.chartmetric.com/api
+  description: Chartmetric production API
+security:
+- bearerAuth: []
+tags:
+- name: Charts
+  description: Platform chart rankings and Chartmetric Score (cm-score).
+paths:
+  /charts/{platform}:
+    get:
+      operationId: getCharts
+      tags:
+      - Charts
+      summary: Get platform charts
+      description: Chart rankings for a streaming, social, or radio platform (for example spotify, applemusic, youtube, shazam, itunes, deezer, soundcloud, beatport, amazon, qq).
+      parameters:
+      - $ref: '#/components/parameters/Platform'
+      - name: date
+        in: query
+        required: false
+        description: Chart date (YYYY-MM-DD).
+        schema:
+          type: string
+          format: date
+      - name: country_code
+        in: query
+        required: false
+        description: Two-letter country code to scope the chart.
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: Chart type or metric (for example streams, popularity).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Ranked chart entries for the platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChartResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/artist/{id}/{chartType}/cm-score:
+    get:
+      operationId: getArtistCmScore
+      tags:
+      - Charts
+      summary: Get artist Chartmetric Score ranking
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/track/{id}/{chartType}/cm-score:
+    get:
+      operationId: getTrackCmScore
+      tags:
+      - Charts
+      summary: Get track Chartmetric Score ranking
+      parameters:
+      - $ref: '#/components/parameters/TrackId'
+      - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the track.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/album/{id}/{chartType}/cm-score:
+    get:
+      operationId: getAlbumCmScore
+      tags:
+      - Charts
+      summary: Get album Chartmetric Score ranking
+      parameters:
+      - $ref: '#/components/parameters/AlbumId'
+      - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the album.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
+    ChartResponse:
+      type: object
+      properties:
+        obj:
+          type: array
+          description: Ranked chart entries.
+          items:
+            type: object
+            additionalProperties: true
+  parameters:
+    ChartType:
+      name: chartType
+      in: path
+      required: true
+      description: Chart type for the platform (for example library, listeners, popularity).
+      schema:
+        type: string
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.

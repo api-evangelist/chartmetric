@@ -1,0 +1,280 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric Albums Artists API
+  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+- url: https://api.chartmetric.com/api
+  description: Chartmetric production API
+security:
+- bearerAuth: []
+tags:
+- name: Artists
+  description: Artist metadata, stats, related artists, and placements.
+paths:
+  /artist/{id}:
+    get:
+      operationId: getArtist
+      tags:
+      - Artists
+      summary: Get artist metadata
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Artist metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /artist/{id}/stat/{source}:
+    get:
+      operationId: getArtistStat
+      tags:
+      - Artists
+      summary: Get artist stats by data source
+      description: Time-series streaming/social statistics for an artist from a given data source (for example spotify, applemusic, youtube, tiktok, instagram).
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      - $ref: '#/components/parameters/Source'
+      - $ref: '#/components/parameters/Since'
+      - $ref: '#/components/parameters/Until'
+      responses:
+        '200':
+          description: Time-series stat values for the artist on the given source.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/urls:
+    get:
+      operationId: getArtistUrls
+      tags:
+      - Artists
+      summary: Get artist streaming and social URLs
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Streaming, social, and service URLs for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/relatedartists:
+    get:
+      operationId: getRelatedArtists
+      tags:
+      - Artists
+      summary: Get related artists
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: A list of artists related to the given artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/where-people-listen:
+    get:
+      operationId: getArtistWherePeopleListen
+      tags:
+      - Artists
+      summary: Get where-people-listen geography
+      description: Top cities and countries where the artist's audience listens.
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Geographic listening distribution for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/tracks:
+    get:
+      operationId: getArtistTracks
+      tags:
+      - Artists
+      summary: Get artist tracks
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Tracks attributed to the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/albums:
+    get:
+      operationId: getArtistAlbums
+      tags:
+      - Artists
+      summary: Get artist albums
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Albums attributed to the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/{source}/{status}/playlists:
+    get:
+      operationId: getArtistPlaylists
+      tags:
+      - Artists
+      summary: Get artist playlist placements
+      parameters:
+      - $ref: '#/components/parameters/ArtistId'
+      - $ref: '#/components/parameters/Source'
+      - $ref: '#/components/parameters/PlaylistStatus'
+      responses:
+        '200':
+          description: Playlists the artist's catalog appears on for the given source and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    Since:
+      name: since
+      in: query
+      required: false
+      description: Start date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
+    ArtistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Artist'
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric artist ID.
+        name:
+          type: string
+        image_url:
+          type: string
+        isni:
+          type: string
+        country:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        cm_artist_rank:
+          type: integer
+          description: Current Chartmetric artist rank.
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.

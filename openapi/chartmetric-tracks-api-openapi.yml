@@ -1,0 +1,220 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric Albums Tracks API
+  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+- url: https://api.chartmetric.com/api
+  description: Chartmetric production API
+security:
+- bearerAuth: []
+tags:
+- name: Tracks
+  description: Track metadata, stats, charts, and playlist placements.
+paths:
+  /track/{id}:
+    get:
+      operationId: getTrack
+      tags:
+      - Tracks
+      summary: Get track metadata
+      parameters:
+      - $ref: '#/components/parameters/TrackId'
+      responses:
+        '200':
+          description: Track metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /track/{id}/{platform}/stats:
+    get:
+      operationId: getTrackStats
+      tags:
+      - Tracks
+      summary: Get track stats by platform
+      parameters:
+      - $ref: '#/components/parameters/TrackId'
+      - $ref: '#/components/parameters/Platform'
+      - $ref: '#/components/parameters/Since'
+      - $ref: '#/components/parameters/Until'
+      responses:
+        '200':
+          description: Time-series stat values for the track on the given platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /track/{id}/{chartType}/charts:
+    get:
+      operationId: getTrackCharts
+      tags:
+      - Tracks
+      summary: Get track chart history
+      parameters:
+      - $ref: '#/components/parameters/TrackId'
+      - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chart appearances for the track.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /track/{id}/{platform}/{status}/playlists:
+    get:
+      operationId: getTrackPlaylists
+      tags:
+      - Tracks
+      summary: Get track playlist placements
+      parameters:
+      - $ref: '#/components/parameters/TrackId'
+      - $ref: '#/components/parameters/Platform'
+      - $ref: '#/components/parameters/PlaylistStatus'
+      responses:
+        '200':
+          description: Playlists the track appears on for the given platform and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
+    Track:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric track ID.
+        name:
+          type: string
+        isrc:
+          type: string
+        artist_names:
+          type: array
+          items:
+            type: string
+        album_names:
+          type: array
+          items:
+            type: string
+        release_dates:
+          type: array
+          items:
+            type: string
+            format: date
+    TrackResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Track'
+  parameters:
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    ChartType:
+      name: chartType
+      in: path
+      required: true
+      description: Chart type for the platform (for example library, listeners, popularity).
+      schema:
+        type: string
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
+    Since:
+      name: since
+      in: query
+      required: false
+      description: Start date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.
