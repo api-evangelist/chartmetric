@@ -1,0 +1,26 @@
+{
+  "provider": "chartmetric",
+  "sources": [
+    "chartmetric-albums-api-openapi.yml",
+    "chartmetric-artists-api-openapi.yml",
+    "chartmetric-authentication-api-openapi.yml",
+    "chartmetric-charts-api-openapi.yml",
+    "chartmetric-playlists-api-openapi.yml",
+    "chartmetric-search-api-openapi.yml",
+    "chartmetric-tracks-api-openapi.yml"
+  ],
+  "outputs": [
+    "chartmetric-albums-api-openapi.yml",
+    "chartmetric-artists-api-openapi.yml",
+    "chartmetric-authentication-api-openapi.yml",
+    "chartmetric-charts-api-openapi.yml",
+    "chartmetric-playlists-api-openapi.yml",
+    "chartmetric-search-api-openapi.yml",
+    "chartmetric-tracks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

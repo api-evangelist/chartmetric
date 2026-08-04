@@ -1,0 +1,845 @@
+openapi: 3.0.1
+info:
+  title: Chartmetric API
+  description: >-
+    REST API for the Chartmetric music analytics and artist-intelligence
+    platform. Provides programmatic access to artists, tracks, albums,
+    playlists, and charts along with cross-platform streaming, social, and
+    radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram,
+    and other platforms, plus a unified search endpoint. Authentication uses a
+    short-lived Bearer access token minted by exchanging a long-lived refresh
+    token at POST /token.
+  termsOfService: https://chartmetric.com/terms-of-service
+  contact:
+    name: Chartmetric Support
+    email: hi@chartmetric.com
+    url: https://apidocs.chartmetric.com/
+  version: '1.0'
+servers:
+  - url: https://api.chartmetric.com/api
+    description: Chartmetric production API
+security:
+  - bearerAuth: []
+tags:
+  - name: Authentication
+    description: Exchange a refresh token for a short-lived access token.
+  - name: Artists
+    description: Artist metadata, stats, related artists, and placements.
+  - name: Tracks
+    description: Track metadata, stats, charts, and playlist placements.
+  - name: Albums
+    description: Album metadata, tracks, followers, charts, and placements.
+  - name: Playlists
+    description: Playlist metadata, track listings, snapshots, and evolution.
+  - name: Charts
+    description: Platform chart rankings and Chartmetric Score (cm-score).
+  - name: Search
+    description: Unified entity search.
+paths:
+  /token:
+    post:
+      operationId: createToken
+      tags:
+        - Authentication
+      summary: Mint an access token
+      description: >-
+        Exchange a long-lived refresh token for a short-lived (1 hour) access
+        token. Reuse the access token across requests until it expires.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: An access token and its expiration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /search:
+    get:
+      operationId: search
+      tags:
+        - Search
+      summary: Search entities
+      description: >-
+        Free-text search across artists, tracks, albums, playlists, curators,
+        and other entity types, returning Chartmetric IDs for follow-on lookups.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query string.
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: Comma-separated entity types to restrict the search to (for example artists, tracks, albums, playlists, curators).
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Search results grouped by entity type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}:
+    get:
+      operationId: getArtist
+      tags:
+        - Artists
+      summary: Get artist metadata
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Artist metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /artist/{id}/stat/{source}:
+    get:
+      operationId: getArtistStat
+      tags:
+        - Artists
+      summary: Get artist stats by data source
+      description: Time-series streaming/social statistics for an artist from a given data source (for example spotify, applemusic, youtube, tiktok, instagram).
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+        - $ref: '#/components/parameters/Source'
+        - $ref: '#/components/parameters/Since'
+        - $ref: '#/components/parameters/Until'
+      responses:
+        '200':
+          description: Time-series stat values for the artist on the given source.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/urls:
+    get:
+      operationId: getArtistUrls
+      tags:
+        - Artists
+      summary: Get artist streaming and social URLs
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Streaming, social, and service URLs for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/relatedartists:
+    get:
+      operationId: getRelatedArtists
+      tags:
+        - Artists
+      summary: Get related artists
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: A list of artists related to the given artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/where-people-listen:
+    get:
+      operationId: getArtistWherePeopleListen
+      tags:
+        - Artists
+      summary: Get where-people-listen geography
+      description: Top cities and countries where the artist's audience listens.
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Geographic listening distribution for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/tracks:
+    get:
+      operationId: getArtistTracks
+      tags:
+        - Artists
+      summary: Get artist tracks
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Tracks attributed to the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/albums:
+    get:
+      operationId: getArtistAlbums
+      tags:
+        - Artists
+      summary: Get artist albums
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+      responses:
+        '200':
+          description: Albums attributed to the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artist/{id}/{source}/{status}/playlists:
+    get:
+      operationId: getArtistPlaylists
+      tags:
+        - Artists
+      summary: Get artist playlist placements
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+        - $ref: '#/components/parameters/Source'
+        - $ref: '#/components/parameters/PlaylistStatus'
+      responses:
+        '200':
+          description: Playlists the artist's catalog appears on for the given source and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /track/{id}:
+    get:
+      operationId: getTrack
+      tags:
+        - Tracks
+      summary: Get track metadata
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+      responses:
+        '200':
+          description: Track metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /track/{id}/{platform}/stats:
+    get:
+      operationId: getTrackStats
+      tags:
+        - Tracks
+      summary: Get track stats by platform
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+        - $ref: '#/components/parameters/Platform'
+        - $ref: '#/components/parameters/Since'
+        - $ref: '#/components/parameters/Until'
+      responses:
+        '200':
+          description: Time-series stat values for the track on the given platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /track/{id}/{chartType}/charts:
+    get:
+      operationId: getTrackCharts
+      tags:
+        - Tracks
+      summary: Get track chart history
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+        - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chart appearances for the track.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /track/{id}/{platform}/{status}/playlists:
+    get:
+      operationId: getTrackPlaylists
+      tags:
+        - Tracks
+      summary: Get track playlist placements
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+        - $ref: '#/components/parameters/Platform'
+        - $ref: '#/components/parameters/PlaylistStatus'
+      responses:
+        '200':
+          description: Playlists the track appears on for the given platform and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /album/{id}:
+    get:
+      operationId: getAlbum
+      tags:
+        - Albums
+      summary: Get album metadata
+      parameters:
+        - $ref: '#/components/parameters/AlbumId'
+      responses:
+        '200':
+          description: Album metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /album/{id}/tracks:
+    get:
+      operationId: getAlbumTracks
+      tags:
+        - Albums
+      summary: Get album tracks
+      parameters:
+        - $ref: '#/components/parameters/AlbumId'
+      responses:
+        '200':
+          description: Tracks belonging to the album.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /album/{id}/{source}/followers:
+    get:
+      operationId: getAlbumFollowers
+      tags:
+        - Albums
+      summary: Get album followers by source
+      parameters:
+        - $ref: '#/components/parameters/AlbumId'
+        - $ref: '#/components/parameters/Source'
+      responses:
+        '200':
+          description: Follower time series for the album on the given source.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /album/{id}/{source}/{status}/playlists:
+    get:
+      operationId: getAlbumPlaylists
+      tags:
+        - Albums
+      summary: Get album playlist placements
+      parameters:
+        - $ref: '#/components/parameters/AlbumId'
+        - $ref: '#/components/parameters/Source'
+        - $ref: '#/components/parameters/PlaylistStatus'
+      responses:
+        '200':
+          description: Playlists the album appears on for the given source and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /playlist/{platform}/{id}:
+    get:
+      operationId: getPlaylist
+      tags:
+        - Playlists
+      summary: Get playlist metadata
+      parameters:
+        - $ref: '#/components/parameters/Platform'
+        - $ref: '#/components/parameters/PlaylistId'
+      responses:
+        '200':
+          description: Playlist metadata object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /playlist/{platform}/{id}/{span}/tracks:
+    get:
+      operationId: getPlaylistTracks
+      tags:
+        - Playlists
+      summary: Get playlist tracks
+      description: Current or historical track listing for a playlist over a given span (for example current, past).
+      parameters:
+        - $ref: '#/components/parameters/Platform'
+        - $ref: '#/components/parameters/PlaylistId'
+        - name: span
+          in: path
+          required: true
+          description: Time span of the track listing (for example current, past).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tracks on the playlist for the given span.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /playlist/{platform}/{id}/snapshot:
+    get:
+      operationId: getPlaylistSnapshot
+      tags:
+        - Playlists
+      summary: Get playlist snapshot
+      parameters:
+        - $ref: '#/components/parameters/Platform'
+        - $ref: '#/components/parameters/PlaylistId'
+      responses:
+        '200':
+          description: A point-in-time snapshot of the playlist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /playlist/{platform}/lists:
+    get:
+      operationId: getPlaylistLists
+      tags:
+        - Playlists
+      summary: List playlists by platform
+      parameters:
+        - $ref: '#/components/parameters/Platform'
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: A list of playlists tracked for the platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/{platform}:
+    get:
+      operationId: getCharts
+      tags:
+        - Charts
+      summary: Get platform charts
+      description: Chart rankings for a streaming, social, or radio platform (for example spotify, applemusic, youtube, shazam, itunes, deezer, soundcloud, beatport, amazon, qq).
+      parameters:
+        - $ref: '#/components/parameters/Platform'
+        - name: date
+          in: query
+          required: false
+          description: Chart date (YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+        - name: country_code
+          in: query
+          required: false
+          description: Two-letter country code to scope the chart.
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: Chart type or metric (for example streams, popularity).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ranked chart entries for the platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChartResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/artist/{id}/{chartType}/cm-score:
+    get:
+      operationId: getArtistCmScore
+      tags:
+        - Charts
+      summary: Get artist Chartmetric Score ranking
+      parameters:
+        - $ref: '#/components/parameters/ArtistId'
+        - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the artist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/track/{id}/{chartType}/cm-score:
+    get:
+      operationId: getTrackCmScore
+      tags:
+        - Charts
+      summary: Get track Chartmetric Score ranking
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+        - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the track.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /charts/album/{id}/{chartType}/cm-score:
+    get:
+      operationId: getAlbumCmScore
+      tags:
+        - Charts
+      summary: Get album Chartmetric Score ranking
+      parameters:
+        - $ref: '#/components/parameters/AlbumId'
+        - $ref: '#/components/parameters/ChartType'
+      responses:
+        '200':
+          description: Chartmetric Score (cm-score) ranking history for the album.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericObject'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /token.
+  parameters:
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
+    PlaylistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric playlist ID.
+      schema:
+        type: integer
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
+    ChartType:
+      name: chartType
+      in: path
+      required: true
+      description: Chart type for the platform (for example library, listeners, popularity).
+      schema:
+        type: string
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+          - current
+          - past
+    Since:
+      name: since
+      in: query
+      required: false
+      description: Start date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    TokenRequest:
+      type: object
+      required:
+        - refreshtoken
+      properties:
+        refreshtoken:
+          type: string
+          description: Long-lived refresh token issued by Chartmetric.
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Short-lived Bearer access token.
+        expires_in:
+          type: integer
+          description: Token lifetime in seconds (3600).
+          example: 3600
+        scope:
+          type: string
+        refresh_token:
+          type: string
+    SearchResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Search results grouped by entity type (artists, tracks, albums, playlists, curators).
+          additionalProperties: true
+    ArtistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Artist'
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric artist ID.
+        name:
+          type: string
+        image_url:
+          type: string
+        isni:
+          type: string
+        country:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        cm_artist_rank:
+          type: integer
+          description: Current Chartmetric artist rank.
+    TrackResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Track'
+    Track:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric track ID.
+        name:
+          type: string
+        isrc:
+          type: string
+        artist_names:
+          type: array
+          items:
+            type: string
+        album_names:
+          type: array
+          items:
+            type: string
+        release_dates:
+          type: array
+          items:
+            type: string
+            format: date
+    AlbumResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Album'
+    Album:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric album ID.
+        name:
+          type: string
+        upc:
+          type: string
+        label:
+          type: string
+        release_date:
+          type: string
+          format: date
+        artist_names:
+          type: array
+          items:
+            type: string
+    PlaylistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Playlist'
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric playlist ID.
+        name:
+          type: string
+        platform:
+          type: string
+        followers:
+          type: integer
+        owner_name:
+          type: string
+        num_track:
+          type: integer
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
+    ChartResponse:
+      type: object
+      properties:
+        obj:
+          type: array
+          description: Ranked chart entries.
+          items:
+            type: object
+            additionalProperties: true
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
