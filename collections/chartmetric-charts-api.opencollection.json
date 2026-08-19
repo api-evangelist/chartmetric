@@ -1,0 +1,136 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric Albums Charts API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Charts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get platform charts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/:platform",
+            "params": [
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Chart date (YYYY-MM-DD)."
+              },
+              {
+                "name": "country_code",
+                "value": "",
+                "type": "query",
+                "description": "Two-letter country code to scope the chart."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Chart type or metric (for example streams, popularity)."
+              }
+            ]
+          },
+          "docs": "Chart rankings for a streaming, social, or radio platform (for example spotify, applemusic, youtube, shazam, itunes, deezer, soundcloud, beatport, amazon, qq)."
+        },
+        {
+          "info": {
+            "name": "Get artist Chartmetric Score ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/artist/:id/:chartType/cm-score",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              },
+              {
+                "name": "chartType",
+                "value": "",
+                "type": "path",
+                "description": "Chart type for the platform (for example library, listeners, popularity)."
+              }
+            ]
+          },
+          "docs": "Get artist Chartmetric Score ranking"
+        },
+        {
+          "info": {
+            "name": "Get track Chartmetric Score ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/track/:id/:chartType/cm-score",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric track ID."
+              },
+              {
+                "name": "chartType",
+                "value": "",
+                "type": "path",
+                "description": "Chart type for the platform (for example library, listeners, popularity)."
+              }
+            ]
+          },
+          "docs": "Get track Chartmetric Score ranking"
+        },
+        {
+          "info": {
+            "name": "Get album Chartmetric Score ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/charts/album/:id/:chartType/cm-score",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric album ID."
+              },
+              {
+                "name": "chartType",
+                "value": "",
+                "type": "path",
+                "description": "Chart type for the platform (for example library, listeners, popularity)."
+              }
+            ]
+          },
+          "docs": "Get album Chartmetric Score ranking"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

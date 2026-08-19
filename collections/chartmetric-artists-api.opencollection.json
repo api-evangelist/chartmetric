@@ -1,0 +1,206 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric Albums Artists API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Artists",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get artist metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Get artist metadata"
+        },
+        {
+          "info": {
+            "name": "Get artist stats by data source",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/stat/:source",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "path",
+                "description": "Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer)."
+              },
+              {
+                "name": "since",
+                "value": "",
+                "type": "query",
+                "description": "Start date for time-series data (YYYY-MM-DD)."
+              },
+              {
+                "name": "until",
+                "value": "",
+                "type": "query",
+                "description": "End date for time-series data (YYYY-MM-DD)."
+              }
+            ]
+          },
+          "docs": "Time-series streaming/social statistics for an artist from a given data source (for example spotify, applemusic, youtube, tiktok, instagram)."
+        },
+        {
+          "info": {
+            "name": "Get artist streaming and social URLs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/urls",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Get artist streaming and social URLs"
+        },
+        {
+          "info": {
+            "name": "Get related artists",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/relatedartists",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Get related artists"
+        },
+        {
+          "info": {
+            "name": "Get where-people-listen geography",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/where-people-listen",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Top cities and countries where the artist's audience listens."
+        },
+        {
+          "info": {
+            "name": "Get artist tracks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/tracks",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Get artist tracks"
+        },
+        {
+          "info": {
+            "name": "Get artist albums",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/albums",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              }
+            ]
+          },
+          "docs": "Get artist albums"
+        },
+        {
+          "info": {
+            "name": "Get artist playlist placements",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/artist/:id/:source/:status/playlists",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric artist ID."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "path",
+                "description": "Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer)."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "path",
+                "description": "Placement status (current or past)."
+              }
+            ]
+          },
+          "docs": "Get artist playlist placements"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

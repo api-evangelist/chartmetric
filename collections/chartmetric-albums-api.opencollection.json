@@ -1,0 +1,118 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric Albums API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Albums",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get album metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric album ID."
+              }
+            ]
+          },
+          "docs": "Get album metadata"
+        },
+        {
+          "info": {
+            "name": "Get album tracks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/:id/tracks",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric album ID."
+              }
+            ]
+          },
+          "docs": "Get album tracks"
+        },
+        {
+          "info": {
+            "name": "Get album followers by source",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/:id/:source/followers",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric album ID."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "path",
+                "description": "Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer)."
+              }
+            ]
+          },
+          "docs": "Get album followers by source"
+        },
+        {
+          "info": {
+            "name": "Get album playlist placements",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/album/:id/:source/:status/playlists",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric album ID."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "path",
+                "description": "Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer)."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "path",
+                "description": "Placement status (current or past)."
+              }
+            ]
+          },
+          "docs": "Get album playlist placements"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

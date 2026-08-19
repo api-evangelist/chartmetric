@@ -1,0 +1,134 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric Albums Playlists API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Playlists",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get playlist metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/:platform/:id",
+            "params": [
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric playlist ID."
+              }
+            ]
+          },
+          "docs": "Get playlist metadata"
+        },
+        {
+          "info": {
+            "name": "Get playlist tracks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/:platform/:id/:span/tracks",
+            "params": [
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric playlist ID."
+              },
+              {
+                "name": "span",
+                "value": "",
+                "type": "path",
+                "description": "Time span of the track listing (for example current, past)."
+              }
+            ]
+          },
+          "docs": "Current or historical track listing for a playlist over a given span (for example current, past)."
+        },
+        {
+          "info": {
+            "name": "Get playlist snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/:platform/:id/snapshot",
+            "params": [
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric playlist ID."
+              }
+            ]
+          },
+          "docs": "Get playlist snapshot"
+        },
+        {
+          "info": {
+            "name": "List playlists by platform",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/playlist/:platform/lists",
+            "params": [
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List playlists by platform"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

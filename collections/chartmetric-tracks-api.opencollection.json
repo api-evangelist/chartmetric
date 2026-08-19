@@ -1,0 +1,136 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chartmetric Albums Tracks API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Tracks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get track metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric track ID."
+              }
+            ]
+          },
+          "docs": "Get track metadata"
+        },
+        {
+          "info": {
+            "name": "Get track stats by platform",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/:id/:platform/stats",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric track ID."
+              },
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "since",
+                "value": "",
+                "type": "query",
+                "description": "Start date for time-series data (YYYY-MM-DD)."
+              },
+              {
+                "name": "until",
+                "value": "",
+                "type": "query",
+                "description": "End date for time-series data (YYYY-MM-DD)."
+              }
+            ]
+          },
+          "docs": "Get track stats by platform"
+        },
+        {
+          "info": {
+            "name": "Get track chart history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/:id/:chartType/charts",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric track ID."
+              },
+              {
+                "name": "chartType",
+                "value": "",
+                "type": "path",
+                "description": "Chart type for the platform (for example library, listeners, popularity)."
+              }
+            ]
+          },
+          "docs": "Get track chart history"
+        },
+        {
+          "info": {
+            "name": "Get track playlist placements",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chartmetric.com/api/track/:id/:platform/:status/playlists",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Chartmetric track ID."
+              },
+              {
+                "name": "platform",
+                "value": "",
+                "type": "path",
+                "description": "Streaming, social, or radio platform identifier."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "path",
+                "description": "Placement status (current or past)."
+              }
+            ]
+          },
+          "docs": "Get track playlist placements"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
