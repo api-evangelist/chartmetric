@@ -1,0 +1,38 @@
+slug: chartmetric
+provider: Chartmetric
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Media, Entertainment & Telecom Content
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Tracks
+  spec_file: chartmetric-tracks-api-openapi.yml
+  capability_id: BC-3770.30
+  capability_id_l1: BC-3770
+  capability_name: Content Performance Analytics
+  confidence: 0.72
+  evidence: GET /track/{id}/{platform}/stats getTrackStats Get track stats by platform; GET /track/{id}/{chartType}/charts
+    getTrackCharts Get track chart history
+  reason: Per-track streaming/social statistics and chart history are analytics of content performance
+    by title and over time, which is the Content Performance Analytics sub-capability. Some ambiguity
+    because track metadata retrieval also resembles catalogue metadata.
+- tag: Charts
+  spec_file: chartmetric-charts-api-openapi.yml
+  capability_id: BC-3770.30
+  capability_id_l1: BC-3770
+  capability_name: Content Performance Analytics
+  confidence: 0.7
+  evidence: GET /charts/{platform} getCharts Get platform charts; GET /charts/track/{id}/{chartType}/cm-score
+    Get track Chartmetric Score ranking
+  reason: Chart rankings and Chartmetric Scores for tracks, albums and artists are analytics of how content
+    performs by title over time across streaming platforms, matching Content Performance Analytics. Slight
+    ambiguity as the data is third-party market/chart intelligence rather than first-party viewership
+    telemetry.

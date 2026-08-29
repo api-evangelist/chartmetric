@@ -170,6 +170,9 @@ apis:
   - type: OpenCollection
     url: collections/chartmetric.opencollection.json
 common:
+- type: CapabilityMap
+  url: capabilities/chartmetric-capability-edges.yml
+  name: Chartmetric Business Capability Map
 - type: AgenticAccess
   url: agentic-access/chartmetric-agentic-access.yml
 - type: DomainSecurity
