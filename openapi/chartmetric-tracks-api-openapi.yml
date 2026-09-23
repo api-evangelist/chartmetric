@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Chartmetric Albums Tracks API
+  title: Chartmetric Tracks API
   description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
   termsOfService: https://chartmetric.com/terms-of-service
   contact:
@@ -116,13 +116,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    StatResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Time-series stat values keyed by metric.
-          additionalProperties: true
     Track:
       type: object
       properties:
@@ -151,17 +144,14 @@ components:
       properties:
         obj:
           $ref: '#/components/schemas/Track'
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
   parameters:
-    PlaylistStatus:
-      name: status
-      in: path
-      required: true
-      description: Placement status (current or past).
-      schema:
-        type: string
-        enum:
-        - current
-        - past
     Until:
       name: until
       in: query
@@ -170,25 +160,11 @@ components:
       schema:
         type: string
         format: date
-    TrackId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric track ID.
-      schema:
-        type: integer
     ChartType:
       name: chartType
       in: path
       required: true
       description: Chart type for the platform (for example library, listeners, popularity).
-      schema:
-        type: string
-    Platform:
-      name: platform
-      in: path
-      required: true
-      description: Streaming, social, or radio platform identifier.
       schema:
         type: string
     Since:
@@ -199,6 +175,30 @@ components:
       schema:
         type: string
         format: date
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
   responses:
     Unauthorized:
       description: Missing or invalid access token.

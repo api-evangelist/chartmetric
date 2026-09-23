@@ -1,0 +1,1 @@
+{"resource":"https://mcp.chartmetric.com","authorization_servers":["https://mcp.chartmetric.com"],"scopes_supported":["mcp:read","mcp:write","mcp:tools"],"bearer_methods_supported":["header"]}

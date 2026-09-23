@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Chartmetric Albums Artists API
+  title: Chartmetric Artists API
   description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
   termsOfService: https://chartmetric.com/terms-of-service
   contact:
@@ -163,48 +163,19 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    PlaylistStatus:
-      name: status
-      in: path
-      required: true
-      description: Placement status (current or past).
-      schema:
-        type: string
-        enum:
-        - current
-        - past
-    Until:
-      name: until
-      in: query
-      required: false
-      description: End date for time-series data (YYYY-MM-DD).
-      schema:
-        type: string
-        format: date
-    ArtistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric artist ID.
-      schema:
-        type: integer
-    Since:
-      name: since
-      in: query
-      required: false
-      description: Start date for time-series data (YYYY-MM-DD).
-      schema:
-        type: string
-        format: date
-    Source:
-      name: source
-      in: path
-      required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
-      schema:
-        type: string
   schemas:
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
     Error:
       type: object
       properties:
@@ -214,11 +185,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    ArtistResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Artist'
     Artist:
       type: object
       properties:
@@ -240,6 +206,11 @@ components:
         cm_artist_rank:
           type: integer
           description: Current Chartmetric artist rank.
+    ArtistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Artist'
     StatResponse:
       type: object
       properties:
@@ -247,18 +218,47 @@ components:
           type: object
           description: Time-series stat values keyed by metric.
           additionalProperties: true
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
+  parameters:
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    Since:
+      name: since
+      in: query
+      required: false
+      description: Start date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
   responses:
     Unauthorized:
       description: Missing or invalid access token.

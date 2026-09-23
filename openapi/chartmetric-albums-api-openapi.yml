@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: Chartmetric Albums API
   description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
@@ -91,6 +91,31 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  parameters:
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
   schemas:
     Album:
       type: object
@@ -120,13 +145,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    StatResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Time-series stat values keyed by metric.
-          additionalProperties: true
     AlbumResponse:
       type: object
       properties:
@@ -144,31 +162,13 @@ components:
             items:
               type: object
               additionalProperties: true
-  parameters:
-    Source:
-      name: source
-      in: path
-      required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
-      schema:
-        type: string
-    PlaylistStatus:
-      name: status
-      in: path
-      required: true
-      description: Placement status (current or past).
-      schema:
-        type: string
-        enum:
-        - current
-        - past
-    AlbumId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric album ID.
-      schema:
-        type: integer
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
   responses:
     Unauthorized:
       description: Missing or invalid access token.

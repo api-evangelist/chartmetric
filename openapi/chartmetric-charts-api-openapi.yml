@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Chartmetric Albums Charts API
+  title: Chartmetric Charts API
   description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
   termsOfService: https://chartmetric.com/terms-of-service
   contact:
@@ -141,6 +141,13 @@ components:
             type: object
             additionalProperties: true
   parameters:
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
     ChartType:
       name: chartType
       in: path
@@ -148,13 +155,6 @@ components:
       description: Chart type for the platform (for example library, listeners, popularity).
       schema:
         type: string
-    TrackId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric track ID.
-      schema:
-        type: integer
     ArtistId:
       name: id
       in: path
@@ -162,11 +162,11 @@ components:
       description: Chartmetric artist ID.
       schema:
         type: integer
-    AlbumId:
+    TrackId:
       name: id
       in: path
       required: true
-      description: Chartmetric album ID.
+      description: Chartmetric track ID.
       schema:
         type: integer
     Platform:

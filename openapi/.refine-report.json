@@ -1,13 +1,7 @@
 {
   "provider": "chartmetric",
   "sources": [
-    "chartmetric-albums-api-openapi.yml",
-    "chartmetric-artists-api-openapi.yml",
-    "chartmetric-authentication-api-openapi.yml",
-    "chartmetric-charts-api-openapi.yml",
-    "chartmetric-playlists-api-openapi.yml",
-    "chartmetric-search-api-openapi.yml",
-    "chartmetric-tracks-api-openapi.yml"
+    "_original/chartmetric-openapi.yml"
   ],
   "outputs": [
     "chartmetric-albums-api-openapi.yml",
@@ -21,6 +15,18 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "chartmetric-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "chartmetric-albums-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-artists-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-charts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-playlists-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "chartmetric-tracks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
