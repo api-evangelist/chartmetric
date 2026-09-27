@@ -109,6 +109,49 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  parameters:
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
+    ChartType:
+      name: chartType
+      in: path
+      required: true
+      description: Chart type for the platform (for example library, listeners, popularity).
+      schema:
+        type: string
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     GenericObject:
       type: object
@@ -140,49 +183,6 @@ components:
           items:
             type: object
             additionalProperties: true
-  parameters:
-    AlbumId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric album ID.
-      schema:
-        type: integer
-    ChartType:
-      name: chartType
-      in: path
-      required: true
-      description: Chart type for the platform (for example library, listeners, popularity).
-      schema:
-        type: string
-    ArtistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric artist ID.
-      schema:
-        type: integer
-    TrackId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric track ID.
-      schema:
-        type: integer
-    Platform:
-      name: platform
-      in: path
-      required: true
-      description: Streaming, social, or radio platform identifier.
-      schema:
-        type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

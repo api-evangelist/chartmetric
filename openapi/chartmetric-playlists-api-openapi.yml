@@ -111,6 +111,22 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric playlist ID.
+        name:
+          type: string
+        platform:
+          type: string
+        followers:
+          type: integer
+        owner_name:
+          type: string
+        num_track:
+          type: integer
     GenericObject:
       type: object
       properties:
@@ -137,22 +153,19 @@ components:
       properties:
         obj:
           $ref: '#/components/schemas/Playlist'
-    Playlist:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Chartmetric playlist ID.
-        name:
-          type: string
-        platform:
-          type: string
-        followers:
-          type: integer
-        owner_name:
-          type: string
-        num_track:
-          type: integer
+  responses:
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     PlaylistId:
       name: id
@@ -168,19 +181,6 @@ components:
       description: Streaming, social, or radio platform identifier.
       schema:
         type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested entity was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

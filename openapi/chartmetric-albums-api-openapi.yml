@@ -92,13 +92,13 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
-    AlbumId:
-      name: id
+    Source:
+      name: source
       in: path
       required: true
-      description: Chartmetric album ID.
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
       schema:
-        type: integer
+        type: string
     PlaylistStatus:
       name: status
       in: path
@@ -109,14 +109,39 @@ components:
         enum:
         - current
         - past
-    Source:
-      name: source
+    AlbumId:
+      name: id
       in: path
       required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      description: Chartmetric album ID.
       schema:
-        type: string
+        type: integer
+  responses:
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
     Album:
       type: object
       properties:
@@ -145,23 +170,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    AlbumResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Album'
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
     StatResponse:
       type: object
       properties:
@@ -169,19 +177,11 @@ components:
           type: object
           description: Time-series stat values keyed by metric.
           additionalProperties: true
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested entity was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    AlbumResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Album'
   securitySchemes:
     bearerAuth:
       type: http
