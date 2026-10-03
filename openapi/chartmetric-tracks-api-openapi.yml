@@ -95,20 +95,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
-    Platform:
-      name: platform
-      in: path
-      required: true
-      description: Streaming, social, or radio platform identifier.
-      schema:
-        type: string
-    ChartType:
-      name: chartType
-      in: path
-      required: true
-      description: Chart type for the platform (for example library, listeners, popularity).
-      schema:
-        type: string
     PlaylistStatus:
       name: status
       in: path
@@ -119,14 +105,20 @@ components:
         enum:
         - current
         - past
-    Until:
-      name: until
-      in: query
-      required: false
-      description: End date for time-series data (YYYY-MM-DD).
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    ChartType:
+      name: chartType
+      in: path
+      required: true
+      description: Chart type for the platform (for example library, listeners, popularity).
       schema:
         type: string
-        format: date
     Since:
       name: since
       in: query
@@ -135,31 +127,35 @@ components:
       schema:
         type: string
         format: date
-    TrackId:
-      name: id
+    Platform:
+      name: platform
       in: path
       required: true
-      description: Chartmetric track ID.
+      description: Streaming, social, or radio platform identifier.
       schema:
-        type: integer
+        type: string
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    TrackResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Track'
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
     Error:
       type: object
       properties:
@@ -199,19 +195,23 @@ components:
           type: object
           description: Time-series stat values keyed by metric.
           additionalProperties: true
-  responses:
-    NotFound:
-      description: The requested entity was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+    TrackResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Track'
   securitySchemes:
     bearerAuth:
       type: http

@@ -164,13 +164,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
-    Source:
-      name: source
-      in: path
-      required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
-      schema:
-        type: string
     PlaylistStatus:
       name: status
       in: path
@@ -181,13 +174,6 @@ components:
         enum:
         - current
         - past
-    ArtistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric artist ID.
-      schema:
-        type: integer
     Until:
       name: until
       in: query
@@ -204,20 +190,62 @@ components:
       schema:
         type: string
         format: date
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
   responses:
-    NotFound:
-      description: The requested entity was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: Missing or invalid access token.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Chartmetric artist ID.
+        name:
+          type: string
+        image_url:
+          type: string
+        isni:
+          type: string
+        country:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        cm_artist_rank:
+          type: integer
+          description: Current Chartmetric artist rank.
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
     GenericObject:
       type: object
       properties:
@@ -244,34 +272,6 @@ components:
       properties:
         obj:
           $ref: '#/components/schemas/Artist'
-    StatResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Time-series stat values keyed by metric.
-          additionalProperties: true
-    Artist:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Chartmetric artist ID.
-        name:
-          type: string
-        image_url:
-          type: string
-        isni:
-          type: string
-        country:
-          type: string
-        genres:
-          type: array
-          items:
-            type: string
-        cm_artist_rank:
-          type: integer
-          description: Current Chartmetric artist rank.
   securitySchemes:
     bearerAuth:
       type: http

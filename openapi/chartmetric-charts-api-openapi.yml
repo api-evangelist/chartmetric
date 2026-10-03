@@ -110,13 +110,20 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
-    Platform:
-      name: platform
+    TrackId:
+      name: id
       in: path
       required: true
-      description: Streaming, social, or radio platform identifier.
+      description: Chartmetric track ID.
       schema:
-        type: string
+        type: integer
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
     ChartType:
       name: chartType
       in: path
@@ -131,20 +138,13 @@ components:
       description: Chartmetric album ID.
       schema:
         type: integer
-    ArtistId:
-      name: id
+    Platform:
+      name: platform
       in: path
       required: true
-      description: Chartmetric artist ID.
+      description: Streaming, social, or radio platform identifier.
       schema:
-        type: integer
-    TrackId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric track ID.
-      schema:
-        type: integer
+        type: string
   responses:
     Unauthorized:
       description: Missing or invalid access token.
@@ -153,18 +153,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
     Error:
       type: object
       properties:
@@ -183,6 +171,18 @@ components:
           items:
             type: object
             additionalProperties: true
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
   securitySchemes:
     bearerAuth:
       type: http
