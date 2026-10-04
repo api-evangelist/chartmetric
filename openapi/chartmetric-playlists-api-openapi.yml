@@ -110,35 +110,12 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    PlaylistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric playlist ID.
-      schema:
-        type: integer
-    Platform:
-      name: platform
-      in: path
-      required: true
-      description: Streaming, social, or radio platform identifier.
-      schema:
-        type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested entity was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    PlaylistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Playlist'
     Error:
       type: object
       properties:
@@ -148,23 +125,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    PlaylistResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Playlist'
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
     Playlist:
       type: object
       properties:
@@ -181,6 +141,46 @@ components:
           type: string
         num_track:
           type: integer
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
+  responses:
+    NotFound:
+      description: The requested entity was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    PlaylistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric playlist ID.
+      schema:
+        type: integer
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

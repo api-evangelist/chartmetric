@@ -109,21 +109,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    TrackId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric track ID.
-      schema:
-        type: integer
-    ArtistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric artist ID.
-      schema:
-        type: integer
     ChartType:
       name: chartType
       in: path
@@ -131,11 +124,11 @@ components:
       description: Chart type for the platform (for example library, listeners, popularity).
       schema:
         type: string
-    AlbumId:
+    ArtistId:
       name: id
       in: path
       required: true
-      description: Chartmetric album ID.
+      description: Chartmetric artist ID.
       schema:
         type: integer
     Platform:
@@ -145,13 +138,20 @@ components:
       description: Streaming, social, or radio platform identifier.
       schema:
         type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    TrackId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric track ID.
+      schema:
+        type: integer
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
   schemas:
     Error:
       type: object

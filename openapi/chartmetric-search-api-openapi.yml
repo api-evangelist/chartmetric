@@ -67,13 +67,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    SearchResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Search results grouped by entity type (artists, tracks, albums, playlists, curators).
-          additionalProperties: true
     Error:
       type: object
       properties:
@@ -83,6 +76,13 @@ components:
         status:
           type: integer
           description: HTTP status code.
+    SearchResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Search results grouped by entity type (artists, tracks, albums, playlists, curators).
+          additionalProperties: true
   securitySchemes:
     bearerAuth:
       type: http

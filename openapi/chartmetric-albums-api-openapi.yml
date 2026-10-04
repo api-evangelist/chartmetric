@@ -91,32 +91,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    PlaylistStatus:
-      name: status
-      in: path
-      required: true
-      description: Placement status (current or past).
-      schema:
-        type: string
-        enum:
-        - current
-        - past
-    Source:
-      name: source
-      in: path
-      required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
-      schema:
-        type: string
-    AlbumId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric album ID.
-      schema:
-        type: integer
   schemas:
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
     Error:
       type: object
       properties:
@@ -126,30 +108,11 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    StatResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Time-series stat values keyed by metric.
-          additionalProperties: true
     AlbumResponse:
       type: object
       properties:
         obj:
           $ref: '#/components/schemas/Album'
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
     Album:
       type: object
       properties:
@@ -169,6 +132,18 @@ components:
           type: array
           items:
             type: string
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
   responses:
     NotFound:
       description: The requested entity was not found.
@@ -182,6 +157,31 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    AlbumId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric album ID.
+      schema:
+        type: integer
   securitySchemes:
     bearerAuth:
       type: http

@@ -42,6 +42,15 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
     TokenResponse:
       type: object
       properties:
@@ -64,15 +73,6 @@ components:
         refreshtoken:
           type: string
           description: Long-lived refresh token issued by Chartmetric.
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        status:
-          type: integer
-          description: HTTP status code.
   responses:
     Unauthorized:
       description: Missing or invalid access token.
