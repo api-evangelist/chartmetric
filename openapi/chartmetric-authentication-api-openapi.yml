@@ -51,6 +51,14 @@ components:
         status:
           type: integer
           description: HTTP status code.
+    TokenRequest:
+      type: object
+      required:
+      - refreshtoken
+      properties:
+        refreshtoken:
+          type: string
+          description: Long-lived refresh token issued by Chartmetric.
     TokenResponse:
       type: object
       properties:
@@ -65,14 +73,6 @@ components:
           type: string
         refresh_token:
           type: string
-    TokenRequest:
-      type: object
-      required:
-      - refreshtoken
-      properties:
-        refreshtoken:
-          type: string
-          description: Long-lived refresh token issued by Chartmetric.
   responses:
     Unauthorized:
       description: Missing or invalid access token.

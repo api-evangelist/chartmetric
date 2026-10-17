@@ -110,12 +110,22 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  parameters:
+    PlaylistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric playlist ID.
+      schema:
+        type: integer
+    Platform:
+      name: platform
+      in: path
+      required: true
+      description: Streaming, social, or radio platform identifier.
+      schema:
+        type: string
   schemas:
-    PlaylistResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Playlist'
     Error:
       type: object
       properties:
@@ -141,6 +151,11 @@ components:
           type: string
         num_track:
           type: integer
+    PlaylistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Playlist'
     GenericObject:
       type: object
       properties:
@@ -166,21 +181,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    PlaylistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric playlist ID.
-      schema:
-        type: integer
-    Platform:
-      name: platform
-      in: path
-      required: true
-      description: Streaming, social, or radio platform identifier.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

@@ -92,13 +92,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    StatResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Time-series stat values keyed by metric.
-          additionalProperties: true
     Error:
       type: object
       properties:
@@ -108,11 +101,6 @@ components:
         status:
           type: integer
           description: HTTP status code.
-    AlbumResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Album'
     Album:
       type: object
       properties:
@@ -132,6 +120,18 @@ components:
           type: array
           items:
             type: string
+    AlbumResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Album'
+    StatResponse:
+      type: object
+      properties:
+        obj:
+          type: object
+          description: Time-series stat values keyed by metric.
+          additionalProperties: true
     GenericObject:
       type: object
       properties:

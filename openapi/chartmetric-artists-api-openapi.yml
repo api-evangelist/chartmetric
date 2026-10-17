@@ -164,6 +164,20 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    ArtistResponse:
+      type: object
+      properties:
+        obj:
+          $ref: '#/components/schemas/Artist'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        status:
+          type: integer
+          description: HTTP status code.
     StatResponse:
       type: object
       properties:
@@ -171,6 +185,18 @@ components:
           type: object
           description: Time-series stat values keyed by metric.
           additionalProperties: true
+    GenericObject:
+      type: object
+      properties:
+        obj:
+          description: Response payload, shape varies by endpoint.
+          oneOf:
+          - type: object
+            additionalProperties: true
+          - type: array
+            items:
+              type: object
+              additionalProperties: true
     Artist:
       type: object
       properties:
@@ -192,73 +218,6 @@ components:
         cm_artist_rank:
           type: integer
           description: Current Chartmetric artist rank.
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        status:
-          type: integer
-          description: HTTP status code.
-    ArtistResponse:
-      type: object
-      properties:
-        obj:
-          $ref: '#/components/schemas/Artist'
-    GenericObject:
-      type: object
-      properties:
-        obj:
-          description: Response payload, shape varies by endpoint.
-          oneOf:
-          - type: object
-            additionalProperties: true
-          - type: array
-            items:
-              type: object
-              additionalProperties: true
-  parameters:
-    ArtistId:
-      name: id
-      in: path
-      required: true
-      description: Chartmetric artist ID.
-      schema:
-        type: integer
-    Source:
-      name: source
-      in: path
-      required: true
-      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
-      schema:
-        type: string
-    Until:
-      name: until
-      in: query
-      required: false
-      description: End date for time-series data (YYYY-MM-DD).
-      schema:
-        type: string
-        format: date
-    PlaylistStatus:
-      name: status
-      in: path
-      required: true
-      description: Placement status (current or past).
-      schema:
-        type: string
-        enum:
-        - current
-        - past
-    Since:
-      name: since
-      in: query
-      required: false
-      description: Start date for time-series data (YYYY-MM-DD).
-      schema:
-        type: string
-        format: date
   responses:
     NotFound:
       description: The requested entity was not found.
@@ -272,6 +231,47 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    Source:
+      name: source
+      in: path
+      required: true
+      description: Data source / platform (for example spotify, applemusic, youtube, tiktok, instagram, deezer).
+      schema:
+        type: string
+    PlaylistStatus:
+      name: status
+      in: path
+      required: true
+      description: Placement status (current or past).
+      schema:
+        type: string
+        enum:
+        - current
+        - past
+    ArtistId:
+      name: id
+      in: path
+      required: true
+      description: Chartmetric artist ID.
+      schema:
+        type: integer
+    Since:
+      name: since
+      in: query
+      required: false
+      description: Start date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
+    Until:
+      name: until
+      in: query
+      required: false
+      description: End date for time-series data (YYYY-MM-DD).
+      schema:
+        type: string
+        format: date
   securitySchemes:
     bearerAuth:
       type: http
