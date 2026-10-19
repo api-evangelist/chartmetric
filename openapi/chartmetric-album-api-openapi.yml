@@ -1,0 +1,2039 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Album API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Album
+  description: Albums, EPs and singles as released on streaming platforms, identified by a Chartmetric album ID. Endpoints cover album metadata, cross-platform ID lookup, the tracklist, per-platform stats, chart appearances, and the playlists the album is featured on.
+paths:
+  /api/album/{id}/{type}/charts:
+    get:
+      summary: Album Charts
+      tags:
+      - Album
+      operationId: getAlbumCharts
+      description: Chart history for an album on a platform (`applemusic`, `itunes`, or `amazon`). Date range accepts up to 365 days between `since` and `until`.
+      parameters:
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - applemusic
+          - itunes
+          - amazon
+          description: Chart source platform. One of `applemusic`, `itunes`, or `amazon`.
+        required: true
+        description: Chart source platform. One of `applemusic`, `itunes`, or `amazon`.
+        examples:
+          default:
+            value: applemusic
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric album ID.
+        required: true
+        description: Chartmetric album ID.
+        examples:
+          default:
+            value: 1
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start date in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+          default: '2026-04-22'
+        required: false
+        description: Start date in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+      - name: until
+        in: query
+        schema:
+          type: string
+          format: date
+          description: End date in ISO format (e.g. '2025-11-15'). Defaults to today; must be at most 365 days after `since`.
+          default: '2026-10-19'
+        required: false
+        description: End date in ISO format (e.g. '2025-11-15'). Defaults to today; must be at most 365 days after `since`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      data:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            itunes_album_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: iTunes album ID at the time the chart was recorded.
+                            rank:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Chart position on the recorded date.
+                            added_at:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date the chart row was recorded.
+                            code2:
+                              type:
+                              - string
+                              - 'null'
+                              minLength: 2
+                              maxLength: 2
+                              description: ISO 3166-1 alpha-2 country code of the chart (e.g. 'US').
+                            genre:
+                              type:
+                              - string
+                              - 'null'
+                              description: Chart genre name.
+                            gnp:
+                              type:
+                              - string
+                              - 'null'
+                              description: Chart GNP segment value.
+                            pre_rank:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Chart position on the previous recorded date.
+                            peak_rank:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Best (lowest-numbered) chart position observed.
+                            peak_date:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date `peak_rank` was achieved.
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric album ID. Same value as `cm_album`.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album name.
+                            release_date:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Album release date.
+                            copyright:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album copyright statement.
+                            num_track:
+                              type:
+                              - string
+                              - 'null'
+                              description: Number of tracks on the album, returned as a string.
+                            upc:
+                              type:
+                              - string
+                              - 'null'
+                              description: Universal Product Code identifying the release.
+                            description:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album description.
+                            is_single:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True when the release is classified as a single.
+                            artwork_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album artwork image URL.
+                            label:
+                              type:
+                              - string
+                              - 'null'
+                              description: Record label that released the album.
+                            genres:
+                              type:
+                              - string
+                              - 'null'
+                              description: Comma-separated list of album genres.
+                            created_at:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date the album row was created in Chartmetric.
+                            modified_at:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date the album row was last modified in Chartmetric.
+                            cm_album:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric album ID.
+                            storefronts:
+                              type: array
+                              items:
+                                type: string
+                              description: ISO 3166-1 alpha-2 country codes where the album is available.
+                            itunes_album_ids:
+                              type: array
+                              items:
+                                type: string
+                              description: iTunes album IDs associated with this album.
+                            artists:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  itunes_artist_id:
+                                    type:
+                                    - integer
+                                    - 'null'
+                                    description: iTunes artist ID.
+                                  name:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    description: Artist name.
+                                  cm_artist:
+                                    type:
+                                    - integer
+                                    - 'null'
+                                    minimum: 0
+                                    maximum: 2147483647
+                                    description: Chartmetric artist ID.
+                              description: Artists credited on the album.
+                        description: Chart history rows for the album, ordered by `added_at`.
+                      length:
+                        type: integer
+                        minimum: 0
+                        description: Total number of rows in `data`.
+                    required:
+                    - length
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      data:
+                      - itunes_album_id: '1450330588'
+                        rank: 84
+                        added_at: '2020-03-04T08:00:00.000Z'
+                        code2: US
+                        genre: All Genres
+                        gnp: '8510700.00'
+                        pre_rank: 80
+                        peak_rank: 1
+                        peak_date: '2019-02-08T08:00:00.000Z'
+                        id: 3058232
+                        name: thank u, next
+                        release_date: '2019-02-08T08:00:00.000Z'
+                        copyright: (P) 2019 Republic Records, a division of UMG Recordings, Inc.
+                        num_track: '12'
+                        upc: '602577464980'
+                        description: null
+                        is_single: false
+                        artwork_url: https://is5-ssl.mzstatic.com/image/thumb/Music124/v4/4e/26/d5/4e26d5f3-2d62-1b5c-689a-e8de4e6f3797/00602577465284.rgb.jpg/160x160bb.jpeg
+                        label: Republic Records
+                        genres: Pop,Music
+                        created_at: null
+                        modified_at: '2020-09-17T03:10:01.823Z'
+                        cm_album: 3533190
+                        storefronts:
+                        - AU
+                        - JP
+                        - LA
+                        - 'NO'
+                        - US
+                        itunes_album_ids:
+                        - '1450330588'
+                        artists:
+                        - itunes_artist_id: 412778295
+                          name: Ariana Grande
+                          cm_artist: 3963
+                      length: 175
+  /api/album/{type}/{id}/get-ids:
+    get:
+      summary: Get Album IDs
+      tags:
+      - Album
+      operationId: getAlbumIds
+      description: Resolve an album across platforms given a source identifier. `type` accepts `chartmetric`, `upc`, `spotify`, `itunes`, `deezer`, or `amazon`. Multiple rows per `cm_album` may be returned when an album has several platform identifiers.
+      parameters:
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - chartmetric
+          - upc
+          - spotify
+          - itunes
+          - deezer
+          - amazon
+          description: Source identifier type. One of `chartmetric`, `upc`, `spotify`, `itunes`, `deezer`, or `amazon`.
+        required: true
+        description: Source identifier type. One of `chartmetric`, `upc`, `spotify`, `itunes`, `deezer`, or `amazon`.
+        examples:
+          default:
+            value: chartmetric
+      - name: id
+        in: path
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9-_]+$
+          description: Album identifier whose format depends on `type` (numeric Chartmetric ID, UPC string, or platform-specific album ID).
+        required: true
+        description: Album identifier whose format depends on `type` (numeric Chartmetric ID, UPC string, or platform-specific album ID).
+        examples:
+          default:
+            value: '2762'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cm_album:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric album ID.
+                        album_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Album name.
+                        upc:
+                          type:
+                          - string
+                          - 'null'
+                          description: Universal Product Code identifying the release.
+                        spotify_album_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Spotify album ID.
+                        itunes_album_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: iTunes album ID.
+                        deezer_album_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Deezer album ID.
+                        amazon_album_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Amazon album ID (ASIN).
+                      required:
+                      - cm_album
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - cm_album: 815685
+                      album_name: Deja Fu
+                      upc: '3614599568697'
+                      spotify_album_id: 3hpphhVJM2QTUMYuXT7nw4
+                      itunes_album_id: '1126469777'
+                      deezer_album_id: null
+                      amazon_album_id: B01HDU9RN0
+                    - cm_album: 815685
+                      album_name: Deja Fu
+                      upc: '3614599568697'
+                      spotify_album_id: 3hpphhVJM2QTUMYuXT7nw4
+                      itunes_album_id: '1126469777'
+                      deezer_album_id: null
+                      amazon_album_id: B01HFW1FHW
+  /api/album/{id}:
+    get:
+      summary: Album Metadata
+      tags:
+      - Album
+      operationId: getAlbumMetadata
+      description: Album metadata by Chartmetric ID.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric album ID.
+        required: true
+        description: Chartmetric album ID.
+        examples:
+          default:
+            value: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      id:
+                        type:
+                        - integer
+                        - 'null'
+                        minimum: 0
+                        maximum: 2147483647
+                        description: Chartmetric album ID. Same value as `cm_album`.
+                      upc:
+                        type:
+                        - string
+                        - 'null'
+                        description: Universal Product Code identifying the release.
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Album name.
+                      local_name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Localized album name, when available.
+                      local_name_locale:
+                        type:
+                        - string
+                        - 'null'
+                        description: Locale for local_name, when available.
+                      image_url:
+                        type:
+                        - string
+                        - 'null'
+                        description: Album cover image URL.
+                      release_date:
+                        type:
+                        - string
+                        - 'null'
+                        description: Album release date (`YYYY-MM-DD`).
+                      label:
+                        type:
+                        - string
+                        - 'null'
+                        description: Record label that released the album.
+                      spotify_popularity:
+                        type:
+                        - integer
+                        - 'null'
+                        minimum: 0
+                        description: Spotify popularity score (0–100) at the time of caching.
+                      cm_label:
+                        type:
+                        - integer
+                        - 'null'
+                        minimum: 0
+                        maximum: 2147483647
+                        description: Chartmetric label ID.
+                      description:
+                        type:
+                        - string
+                        - 'null'
+                        description: Album description.
+                      created_at:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: Date the album row was created in Chartmetric.
+                      modified_at:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: Date the album row was last modified in Chartmetric.
+                      cm_album:
+                        type: integer
+                        minimum: 0
+                        maximum: 2147483647
+                        description: Chartmetric album ID.
+                      num_track:
+                        anyOf:
+                        - type: string
+                        - type: number
+                          format: float
+                        nullable: true
+                        description: Number of tracks on the album.
+                      spotify_album_ids:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                        description: Spotify album IDs associated with this album.
+                      itunes_album_ids:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                        description: iTunes album IDs associated with this album.
+                      deezer_album_ids:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: string
+                        description: Deezer album IDs associated with this album.
+                      artists:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            cm_artist:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric artist ID.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist image URL.
+                        description: Artists credited on the album.
+                      cm_statistics:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          sp_popularity:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Spotify popularity score (0–100).
+                          num_sp_editorial_playlists:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Count of Spotify editorial playlists featuring this album.
+                          num_sp_playlists:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Count of Spotify playlists featuring this album.
+                          sp_playlist_total_reach:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Sum of followers across all Spotify playlists featuring this album.
+                          sp_editorial_playlist_total_reach:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Sum of followers across all Spotify editorial playlists featuring this album.
+                        description: Cached playlist statistics for the album.
+                    required:
+                    - cm_album
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      id: null
+                      upc: '3614599568697'
+                      name: Deja Fu
+                      local_name: null
+                      local_name_locale: null
+                      image_url: https://i.scdn.co/image/250c66bd1cfd8e1177055c998b43feac5a62ed0d
+                      release_date: '2016-06-22'
+                      label: Ranka Kustannus Oy
+                      spotify_popularity: 2
+                      cm_label: 44035
+                      description: null
+                      created_at: null
+                      modified_at: null
+                      cm_album: 815685
+                      num_track: '1'
+                      spotify_album_ids:
+                      - 3hpphhVJM2QTUMYuXT7nw4
+                      itunes_album_ids: null
+                      deezer_album_ids: null
+                      artists:
+                      - cm_artist: 256101
+                        name: Blind Channel
+                        image_url: https://i.scdn.co/image/99ff63e0299ffe1faa62d90056f6ca59aa2f3443
+                      cm_statistics:
+                        sp_popularity: 2
+                        num_sp_editorial_playlists: 1
+                        num_sp_playlists: 19
+                        sp_playlist_total_reach: 10757
+                        sp_editorial_playlist_total_reach: 0
+  /api/album/{id}/tracks:
+    get:
+      summary: Album Tracks
+      tags:
+      - Album
+      operationId: listAlbumTracks
+      description: Tracks on an album identified by Chartmetric ID. Each track carries cross-platform IDs, artist arrays, and a `cm_statistics` aggregate. Prefer `cm_artists[].{id,name,code2,image_url,cover_url}` over the parallel `cm_artist`, `artist_names`, `code2s`, `artist_images`, `artist_covers` arrays — those are retained for compatibility.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric album ID.
+        required: true
+        description: Chartmetric album ID.
+        examples:
+          default:
+            value: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric track ID.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Track name.
+                        local_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Localized track name, when available.
+                        local_name_locale:
+                          type:
+                          - string
+                          - 'null'
+                          description: Locale for local_name, when available.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Track cover image URL.
+                        isrc:
+                          type:
+                          - string
+                          - 'null'
+                          description: International Standard Recording Code for the track.
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Track description.
+                        created_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Date the track row was created in Chartmetric.
+                        modified_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Date the track row was last modified in Chartmetric.
+                        tags:
+                          type:
+                          - string
+                          - 'null'
+                          description: Comma-separated list of genres for the track.
+                        cm_track:
+                          type:
+                          - integer
+                          - 'null'
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric track ID.
+                        cm_artist:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: integer
+                            minimum: 0
+                            maximum: 2147483647
+                          description: Chartmetric artist IDs. Index aligns with `artist_names`, `code2s`, `artist_images`, `artist_covers`. Prefer `cm_artists[].id`.
+                        artist_names:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Artist names. Deprecated; prefer `cm_artists[].name`.
+                        code2s:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                            minLength: 2
+                            maxLength: 2
+                            description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                          description: Artist country codes (ISO 3166-1 alpha-2). Deprecated; prefer `cm_artists[].code2`.
+                        artist_images:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Artist image URLs. Deprecated; prefer `cm_artists[].image_url`.
+                        artist_covers:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Artist cover image URLs. Deprecated; prefer `cm_artists[].cover_url`.
+                        spotify_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Spotify track IDs, sorted by popularity score.
+                        spotify_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Spotify album IDs the track appears on.
+                        spotify_duration_ms:
+                          type:
+                          - integer
+                          - 'null'
+                          minimum: 0
+                          description: Track duration on Spotify in milliseconds.
+                        itunes_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: iTunes track IDs.
+                        itunes_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: iTunes album IDs the track appears on.
+                        storefronts:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: ISO 3166-1 alpha-2 codes for iTunes storefronts where the track is available.
+                        deezer_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Deezer track IDs.
+                        deezer_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                              format: float
+                          description: Deezer album IDs the track appears on.
+                        deezer_duration:
+                          type:
+                          - integer
+                          - 'null'
+                          minimum: 0
+                          description: Track duration on Deezer in seconds.
+                        amazon_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Amazon track IDs.
+                        amazon_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Amazon album IDs the track appears on.
+                        album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: integer
+                            minimum: 0
+                            maximum: 2147483647
+                          description: Chartmetric album IDs the track appears on. Index aligns with `album_names`, `album_upc`, `album_label`, `release_dates`.
+                        album_names:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Album names.
+                        album_upc:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Album UPC codes.
+                        album_label:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Album record labels.
+                        release_dates:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Album release dates.
+                        cm_artists:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 2
+                                maximum: 2147483647
+                                not:
+                                  enum:
+                                  - 1
+                                description: 'Chartmetric artist ID. Note: id=1 (''Various Artists'') is rejected.'
+                              name:
+                                type:
+                                - string
+                                - 'null'
+                                description: Artist name.
+                              code2:
+                                type:
+                                - string
+                                - 'null'
+                                minLength: 2
+                                maxLength: 2
+                                description: Artist country code (ISO 3166-1 alpha-2, e.g. 'US').
+                              image_url:
+                                type:
+                                - string
+                                - 'null'
+                                description: Artist image URL.
+                              cover_url:
+                                type:
+                                - string
+                                - 'null'
+                                description: Artist cover image URL.
+                            required:
+                            - id
+                          description: Artists credited on the track.
+                        cm_statistics:
+                          type:
+                          - object
+                          - 'null'
+                          properties:
+                            num_sp_editorial_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Spotify editorial playlists featuring this track.
+                            num_sp_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Spotify playlists featuring this track.
+                            sp_playlist_total_reach:
+                              anyOf:
+                              - type: number
+                                format: float
+                              - type: string
+                              nullable: true
+                              description: Sum of followers across all Spotify playlists featuring this track. Returned as a string when the value originates from Snowflake.
+                            num_am_editorial_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Apple Music editorial playlists featuring this track.
+                            num_am_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Apple Music playlists featuring this track.
+                            num_de_editorial_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Deezer editorial playlists featuring this track.
+                            num_de_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Deezer playlists featuring this track.
+                            de_playlist_total_reach:
+                              anyOf:
+                              - type: number
+                                format: float
+                              - type: string
+                              nullable: true
+                              description: Sum of fans across all Deezer playlists featuring this track. Returned as a string when the value originates from Snowflake.
+                            num_az_editorial_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Amazon editorial playlists featuring this track.
+                            num_az_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of Amazon playlists featuring this track.
+                            num_yt_editorial_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of YouTube editorial playlists featuring this track.
+                            num_yt_playlists:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Count of YouTube playlists featuring this track.
+                            yt_playlist_total_reach:
+                              anyOf:
+                              - type: number
+                                format: float
+                              - type: string
+                              nullable: true
+                              description: Sum of subscribers across all YouTube playlists featuring this track. Returned as a string when the value originates from Snowflake.
+                            cm_track:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric track ID.
+                            sp_popularity:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Spotify popularity score (0–100).
+                            num_tt_videos:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Count of TikTok videos using this track.
+                            genius_page_views:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Total Genius lyrics page views for the track.
+                            shazam_counts:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Total Shazam recognitions for the track.
+                            tiktok_counts:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Total TikTok plays for the track.
+                            youtube_views:
+                              anyOf:
+                              - type: number
+                                format: float
+                              - type: string
+                              nullable: true
+                              description: Total YouTube views for the track. Returned as a string when the value originates from Snowflake.
+                          description: Aggregated playlist counts and platform statistics for the track.
+                      required:
+                      - id
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 22396642
+                      name: break up with your girlfriend, i'm bored
+                      image_url: https://api.deezer.com/album/86773062/image
+                      isrc: USUM71900409
+                      description: null
+                      created_at: null
+                      modified_at: '2020-07-03T05:46:13.804Z'
+                      tags: Pop,Music
+                      cm_track: 22396642
+                      cm_artist:
+                      - 3963
+                      artist_names:
+                      - Ariana Grande
+                      code2s:
+                      - US
+                      artist_images:
+                      - https://i.scdn.co/image/b1dfbe843b0b9f54ab2e588f33e7637d2dab065a
+                      artist_covers:
+                      - https://i.scdn.co/image/4599ff6a6b96d54df41e97a484605f0e517ba278
+                      spotify_track_ids:
+                      - 4kV4N9D1iKVxx1KLvtTpjS
+                      spotify_album_ids:
+                      - 2fYhqwDWXjbpjaIJPEfKFw
+                      spotify_duration_ms: 190440
+                      itunes_track_ids:
+                      - '1450330687'
+                      itunes_album_ids:
+                      - '1450330588'
+                      storefronts:
+                      - LA
+                      deezer_track_ids:
+                      - '629899862'
+                      deezer_album_ids:
+                      - 86773062
+                      deezer_duration: 190
+                      amazon_track_ids:
+                      - B082XHFBS6
+                      amazon_album_ids:
+                      - B082XGFGGN
+                      album_ids:
+                      - 3533190
+                      album_names:
+                      - thank u, next
+                      album_upc:
+                      - '602577464980'
+                      album_label:
+                      - Republic Records
+                      release_dates:
+                      - '2019-02-08T08:00:00.000Z'
+                      cm_artists:
+                      - id: 3963
+                        name: Ariana Grande
+                        code2: US
+                        image_url: https://i.scdn.co/image/b1dfbe843b0b9f54ab2e588f33e7637d2dab065a
+                        cover_url: https://i.scdn.co/image/4599ff6a6b96d54df41e97a484605f0e517ba278
+                      cm_statistics:
+                        num_sp_playlists: 3556
+                        num_sp_editorial_playlists: 57
+                        num_am_playlists: 49
+                        num_am_editorial_playlists: 4
+                        num_de_playlists: 11
+                        num_de_editorial_playlists: 2
+                        num_az_playlists: 36
+                        num_az_editorial_playlists: 36
+                        num_yt_playlists: 12
+                        num_yt_editorial_playlists: 3
+                        sp_playlist_total_reach: '10760959'
+                        de_playlist_total_reach: '350115'
+                        yt_playlist_total_reach: '6404331'
+                        cm_track: 22396642
+                        sp_popularity: 80
+                        num_tt_videos: 69100
+                        genius_page_views: null
+                        shazam_counts: 1896424
+                        tiktok_counts: 69100
+                        youtube_views: '369742364'
+  /api/album/{id}/{platform}/{stats}:
+    get:
+      summary: Album Platform Stats
+      tags:
+      - Album
+      operationId: getAlbumStats
+      description: Time-series of a platform-specific stat for an album (currently `platform=spotify`, `stat=followers` returns Spotify popularity). Pass `latest=true` to bypass the date window and receive the most recent point.
+      parameters:
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - spotify
+          description: Streaming platform whose stat is requested. Currently only `spotify` is supported.
+        required: true
+        description: Streaming platform whose stat is requested. Currently only `spotify` is supported.
+        examples:
+          default:
+            value: spotify
+      - name: stats
+        in: path
+        schema:
+          type: string
+          enum:
+          - followers
+          description: Platform stat to retrieve. Currently only `followers` is supported (returns Spotify popularity).
+        required: true
+        description: Platform stat to retrieve. Currently only `followers` is supported (returns Spotify popularity).
+        examples:
+          default:
+            value: followers
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric album ID.
+        required: true
+        description: Chartmetric album ID.
+        examples:
+          default:
+            value: 1
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start of the date window in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+          default: '2026-04-22'
+        required: false
+        description: Start of the date window in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+      - name: until
+        in: query
+        schema:
+          type: string
+          format: date
+          description: End of the date window in ISO format (e.g. '2025-11-15'). Defaults to today.
+          default: '2026-10-19'
+        required: false
+        description: End of the date window in ISO format (e.g. '2025-11-15'). Defaults to today.
+      - name: latest
+        in: query
+        schema:
+          type: boolean
+          description: If true, returns only the most recent data point and ignores the `since`/`until` window.
+        required: false
+        description: If true, returns only the most recent data point and ignores the `since`/`until` window.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: number
+                          format: float
+                          description: Stat value at `timestp`. Despite the path slug `followers`, the value returned for `platform=spotify` is the Spotify album popularity (0–100), not a follower count.
+                        timestp:
+                          type: string
+                          format: date-time
+                          description: Timestamp the data point was recorded.
+                        daily_diff:
+                          type: number
+                          format: float
+                          description: Change in `value` versus the previous day.
+                        weekly_diff:
+                          type: number
+                          format: float
+                          description: Change in `value` versus 7 days prior.
+                        monthly_diff:
+                          type: number
+                          format: float
+                          description: Change in `value` versus 30 days prior.
+                        weekly_diff_percent:
+                          type: number
+                          format: float
+                          description: Percent change in `value` versus 7 days prior.
+                        monthly_diff_percent:
+                          type: number
+                          format: float
+                          description: Percent change in `value` versus 30 days prior.
+                        flags:
+                          type: boolean
+                          description: True when this point carries data-quality flags.
+                        interpolated:
+                          type: boolean
+                          description: True when the value was interpolated from neighboring points.
+                        extrapolated:
+                          type: boolean
+                          description: True when the value was extrapolated beyond the source series.
+                      required:
+                      - value
+                      - timestp
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - value: 97
+                      timestp: '2020-09-20T07:00:00.000Z'
+                    - value: 97
+                      timestp: '2020-09-21T07:00:00.000Z'
+                    - value: 97
+                      timestp: '2020-09-22T07:00:00.000Z'
+                    - value: 97
+                      timestp: '2020-09-23T07:00:00.000Z'
+  /api/album/{id}/{platform}/{status}/playlists:
+    get:
+      summary: Album Playlists
+      tags:
+      - Album
+      operationId: listAlbumPlaylists
+      description: 'Playlists (`status=current` or `past`) featuring an album on a given streaming platform. Items pair a `playlist` object with the corresponding `track` metadata.
+
+
+        **Boolean flag parameters supported per platform:**
+
+
+        | Flag | spotify | applemusic | deezer | amazon |
+
+        |---|:---:|:---:|:---:|:---:|
+
+        | `editorial` | ✅ | ✅ | ✅ | |
+
+        | `editorialBrand` | | ✅ | | |
+
+        | `personalized` | ✅ | | | |
+
+        | `deezerPartner` | | | ✅ | |
+
+        | `chart` | ✅ | ✅ | ✅ | |
+
+        | `thisIs` | ✅ | | | |
+
+        | `hundredPercent` | | | ✅ | |
+
+        | `newMusicFriday` | ✅ | | | |
+
+        | `radio` | ✅ | ✅ | | |
+
+        | `fullyPersonalized` | ✅ | | | |
+
+        | `brand` | ✅ | | ✅ | |
+
+        | `majorCurator` | ✅ | | ✅ | |
+
+        | `musicBrand` | | ✅ | | |
+
+        | `nonMusicBrand` | | ✅ | | |
+
+        | `popularIndie` | ✅ | | ✅ | |
+
+        | `indie` | ✅ | ✅ | ✅ | |
+
+        | `audiobook` | ✅ | | | |
+
+        | `personalityArtist` | | ✅ | | |
+
+
+        Amazon does not accept any flags. Flags are not mutually exclusive — pass others as `false` to scope to one. When no flags are specified the API may return an empty array; specify flags explicitly to get data.'
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric album ID.
+        required: true
+        description: Chartmetric album ID.
+        examples:
+          default:
+            value: 1
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - cm
+          - spotify
+          - itunes
+          - applemusic
+          - deezer
+          - shazam
+          - beatport
+          - amazon
+          - youtube
+          - tunefind
+          - soundcloud
+          description: Streaming platform. One of `spotify`, `applemusic`, `deezer`, or `amazon`; supported boolean filters vary by platform.
+        required: true
+        description: Streaming platform. One of `spotify`, `applemusic`, `deezer`, or `amazon`; supported boolean filters vary by platform.
+        examples:
+          default:
+            value: cm
+      - name: status
+        in: path
+        schema:
+          type: string
+          enum:
+          - current
+          - past
+          description: Playlist status relative to the album. `current` returns playlists currently containing a track from the album; `past` returns playlists that previously contained one.
+        required: true
+        description: Playlist status relative to the album. `current` returns playlists currently containing a track from the album; `past` returns playlists that previously contained one.
+        examples:
+          default:
+            value: current
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start of the added/removed date window in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+          default: '2026-04-22'
+        required: false
+        description: Start of the added/removed date window in ISO format (e.g. '2025-11-01'). Defaults to 180 days ago.
+      - name: until
+        in: query
+        schema:
+          type: string
+          format: date
+          description: End of the added/removed date window in ISO format (e.g. '2025-11-15'). Defaults to today.
+          default: '2026-10-19'
+        required: false
+        description: End of the added/removed date window in ISO format (e.g. '2025-11-15'). Defaults to today.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of items to return per request.
+          default: 10
+        required: false
+        description: Maximum number of items to return per request.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only playlists tagged as indie (independently curated).
+        required: false
+        description: Filter to only playlists tagged as indie (independently curated).
+      - name: majorCurator
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only playlists owned by a major-label curator (Sony, Universal, Warner, etc.).
+        required: false
+        description: Filter to only playlists owned by a major-label curator (Sony, Universal, Warner, etc.).
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only editorial playlists curated by the platform (e.g. Spotify-owned). Defaults to true; pass `false` to include user-curated playlists.
+          default: true
+        required: false
+        description: Filter to only editorial playlists curated by the platform (e.g. Spotify-owned). Defaults to true; pass `false` to include user-curated playlists.
+      - name: newMusicFriday
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only New Music Friday-style new-release playlists.
+        required: false
+        description: Filter to only New Music Friday-style new-release playlists.
+      - name: editorialBrand
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only editorial playlists operated by a brand (e.g. retailer or media outlet).
+        required: false
+        description: Filter to only editorial playlists operated by a brand (e.g. retailer or media outlet).
+      - name: personalized
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only personalized playlists (e.g. Discover Weekly, Release Radar). May vary per listener.
+        required: false
+        description: Filter to only personalized playlists (e.g. Discover Weekly, Release Radar). May vary per listener.
+      - name: deezerPartner
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only Deezer partner-curated playlists.
+        required: false
+        description: Filter to only Deezer partner-curated playlists.
+      - name: chart
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only chart playlists (e.g. Top 50, Viral 50). Reflects platform-published rankings.
+        required: false
+        description: Filter to only chart playlists (e.g. Top 50, Viral 50). Reflects platform-published rankings.
+      - name: thisIs
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only artist-spotlight playlists in the 'This Is X' format.
+        required: false
+        description: Filter to only artist-spotlight playlists in the 'This Is X' format.
+      - name: hundredPercent
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only playlists composed entirely of one artist's catalog.
+        required: false
+        description: Filter to only playlists composed entirely of one artist's catalog.
+      - name: radio
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only algorithmic radio-style playlists generated from a seed track or artist.
+        required: false
+        description: Filter to only algorithmic radio-style playlists generated from a seed track or artist.
+      - name: fullyPersonalized
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only fully personalized playlists where the entire tracklist is unique per listener.
+        required: false
+        description: Filter to only fully personalized playlists where the entire tracklist is unique per listener.
+      - name: brand
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only brand-operated playlists (any flavor — music, non-music, retailer, media).
+        required: false
+        description: Filter to only brand-operated playlists (any flavor — music, non-music, retailer, media).
+      - name: musicBrand
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only music-industry brand playlists (labels, music publications).
+        required: false
+        description: Filter to only music-industry brand playlists (labels, music publications).
+      - name: nonMusicBrand
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only non-music-industry brand playlists (retailers, media outlets, lifestyle).
+        required: false
+        description: Filter to only non-music-industry brand playlists (retailers, media outlets, lifestyle).
+      - name: popularIndie
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only popular indie playlists with significant follower count.
+        required: false
+        description: Filter to only popular indie playlists with significant follower count.
+      - name: audiobook
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only audiobook playlists.
+        required: false
+        description: Filter to only audiobook playlists.
+      - name: personalityArtist
+        in: query
+        schema:
+          type: boolean
+          description: Filter to only playlists curated by personality artists (artists with cultural influence beyond their music).
+        required: false
+        description: Filter to only playlists curated by personality artists (artists with cultural influence beyond their music).
+      - name: minFollowers
+        in: query
+        schema:
+          type: integer
+          description: Minimum follower count for returned playlists. Defaults to 0 (no minimum).
+        required: false
+        description: Minimum follower count for returned playlists. Defaults to 0 (no minimum).
+      - name: showPositionStats
+        in: query
+        schema:
+          type: boolean
+          description: If true, include track position statistics on each playlist entry.
+          default: false
+        required: false
+        description: If true, include track position statistics on each playlist entry.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        playlist:
+                          type: object
+                          properties:
+                            playlist_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Platform playlist ID (e.g. Spotify playlist ID extracted from the URI).
+                            track_id:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric track ID of the album track on this playlist.
+                            position:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Track position within the playlist (1-based).
+                            added_at:
+                              anyOf:
+                              - type: string
+                              - type: string
+                                format: date-time
+                              nullable: true
+                              description: Date the track was added to the playlist.
+                            period:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Number of days the track has been on the playlist.
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Internal playlist row ID; deprecated, prefer `playlist_id`.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Playlist title.
+                            description:
+                              type:
+                              - string
+                              - 'null'
+                              description: Playlist description as set by the curator.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Playlist cover image URL.
+                            sys_last_updated:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date Chartmetric last refreshed this playlist record.
+                            last_updated:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Date the playlist was last updated by its curator on the source platform.
+                            personalized:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True when the playlist is personalized to individual users by the platform.
+                            code2:
+                              type:
+                              - string
+                              - 'null'
+                              minLength: 2
+                              maxLength: 2
+                              description: Country associated with the playlist (ISO 3166-1 alpha-2).
+                            owner_name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Curator (playlist owner) display name.
+                            owner_id:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              nullable: true
+                              description: Curator (playlist owner) ID — internal value, format varies by platform.
+                            editorial:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True when the playlist is curated by an official editorial team. Applies to Spotify, Apple Music, and Deezer.
+                            tags:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    minimum: 0
+                                    maximum: 2147483647
+                                    description: Chartmetric tag ID.
+                                  name:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    description: Tag name.
+                                required:
+                                - id
+                              description: Genre / mood tags associated with the playlist.
+                            followers:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Most recent follower count for the playlist.
+                            num_track:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              nullable: true
+                              description: Total number of tracks on the playlist.
+                            fdiff_week:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Follower change versus 7 days prior (weekly growth).
+                            fdiff_month:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Follower change versus 30 days prior (monthly growth).
+                            catalog:
+                              type:
+                              - string
+                              - 'null'
+                              description: Catalog classification of the playlist.
+                            active_ratio:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Fraction (0–1) of recent days the playlist has been active.
+                          description: Playlist that hosted the album track during the requested period.
+                        track:
+                          type: object
+                          properties:
+                            id:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Internal track row ID; deprecated, prefer `cm_track`.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Track name.
+                            isrc:
+                              type:
+                              - string
+                              - 'null'
+                              description: International Standard Recording Code for the track.
+                            spotify_album_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Spotify album ID the track was sourced from.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Track cover image URL.
+                            spotify_popularity:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Spotify popularity score (0–100) for the track.
+                            cm_track:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric track ID.
+                            spotify_artist_names:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Artist names as listed on Spotify.
+                            track_genre:
+                              type:
+                              - string
+                              - 'null'
+                              description: Comma-separated genre list for the track.
+                            cm_artist:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: integer
+                                minimum: 0
+                                maximum: 2147483647
+                              description: Chartmetric artist IDs. Index aligns with `artist_names`, `code2s`, `artist_images`, `artist_covers`.
+                            artist_names:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Artist names.
+                            code2s:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                                minLength: 2
+                                maxLength: 2
+                                description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                              description: Artist country codes (ISO 3166-1 alpha-2).
+                            artist_images:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Artist image URLs.
+                            artist_covers:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Artist cover image URLs.
+                            spotify_artist_ids:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: string
+                              description: Spotify artist IDs.
+                            spotify_track_ids:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: string
+                              description: Spotify track IDs.
+                            spotify_album_ids:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: string
+                              description: Spotify album IDs the track appears on.
+                            spotify_duration_ms:
+                              anyOf:
+                              - type: number
+                                format: float
+                              - type: array
+                                items: {}
+                              nullable: true
+                              description: Track duration on Spotify in milliseconds. May arrive as an array of values when multiple Spotify track IDs map to the same Chartmetric track.
+                            album_ids:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: integer
+                                minimum: 0
+                                maximum: 2147483647
+                              description: Chartmetric album IDs the track appears on. Index aligns with `album_names`, `album_upc`, `album_label`, `release_dates`.
+                            album_names:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Album names.
+                            album_upc:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Album UPC codes.
+                            album_label:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Album record labels.
+                            release_dates:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: Album release dates.
+                          description: Album track that appears on the playlist (cross-platform metadata).
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - playlist:
+                        playlist_id: 37i9dQZF1DWWMOmoXKqHTD
+                        track_id: 17340502
+                        position: 22
+                        added_at: '2023-07-11'
+                        period: 105
+                        id: 1644599
+                        name: Songs to Sing in the Car
+                        description: ''
+                        image_url: https://i.scdn.co/image/ab67706f00000003ffa215be1a4c64e3cbf59d1e
+                        sys_last_updated: '2023-10-24T00:00:00.000Z'
+                        last_updated: '2023-10-21T09:09:20.000Z'
+                        personalized: true
+                        code2: US
+                        owner_name: Spotify
+                        owner_id: 2
+                        editorial: false
+                        tags:
+                        - id: 462882
+                          name: Pop
+                        - id: 462884
+                          name: Rock
+                        - id: 462889
+                          name: R&B/Soul
+                        followers: 10707440
+                        num_track: 100
+                        fdiff_week: 11408
+                        fdiff_month: 36241
+                        catalog: 'catalogue '
+                        active_ratio: 0
+                      track:
+                        id: 17340502
+                        name: Watermelon Sugar
+                        isrc: USSM11912587
+                        spotify_album_id: 7xV2TzoaVc0ycW7fwBwAml
+                        image_url: https://api.deezer.com/album/119400582/image
+                        spotify_popularity: 89
+                        cm_track: 27222889
+                        spotify_artist_names:
+                        - Harry Styles
+                        track_genre: dance pop,pop,post-teen pop
+                        cm_artist:
+                        - 558681
+                        artist_names:
+                        - Harry Styles
+                        code2s:
+                        - GB
+                        artist_images:
+                        - https://i.scdn.co/image/ab67616100005174f7db7c8ede90a019c54590bb
+                        artist_covers:
+                        - null
+                        spotify_artist_ids:
+                        - 6KImCVD70vtIoJWnq6nGn3
+                        spotify_track_ids:
+                        - 6UelLqGlWMcVH1E5c4H7lY
+                        spotify_album_ids:
+                        - 7xV2TzoaVc0ycW7fwBwAml
+                        spotify_duration_ms: 174000
+                        album_ids:
+                        - 5370467
+                        album_names:
+                        - Watermelon Sugar
+                        album_upc:
+                        - '886448132844'
+                        album_label:
+                        - Columbia
+                        release_dates:
+                        - '2019-12-13'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

@@ -1,0 +1,342 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer SNS API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: SNS
+  description: Deep social data for the social accounts linked to Chartmetric entities. Endpoints return post-level performance, such as the top Instagram posts and reels of an artist.
+paths:
+  /api/SNS/deepSocial/cm_artist/{id}/instagram:
+    get:
+      summary: Get Artist Instagram Top Posts and Reels
+      tags:
+      - SNS
+      operationId: getArtistInstagramTopPostsAndReels
+      description: Returns the artist's top 10 Instagram posts and top 10 Instagram reels. The handler passes through the `user_profile.top_posts` and `user_profile.top_reels` arrays from the deep-social pipeline; either array may be empty when no data is available.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 2
+          maximum: 2147483647
+          not:
+            enum:
+            - 1
+          description: 'Chartmetric artist ID. Note: id=1 (''Various Artists'') is rejected.'
+        required: true
+        description: 'Chartmetric artist ID. Note: id=1 (''Various Artists'') is rejected.'
+        examples:
+          default:
+            value: 2
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      top_posts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            user_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram numeric user ID of the posting account.
+                            username:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram handle of the posting account.
+                            user_picture:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the posting account's profile picture.
+                            user_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the posting account's Instagram profile.
+                            type:
+                              type:
+                              - string
+                              - 'null'
+                              description: Post media type, e.g. 'photo' or 'video'.
+                            post_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram post identifier.
+                            created:
+                              type:
+                              - string
+                              - 'null'
+                              description: ISO 8601 timestamp of when the post was created.
+                            text:
+                              type:
+                              - string
+                              - 'null'
+                              description: Caption or text content of the post.
+                            image:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the post image or, for videos, the video thumbnail.
+                            thumbnail:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the post thumbnail image.
+                            link:
+                              type:
+                              - string
+                              - 'null'
+                              description: Direct URL to the post on Instagram.
+                            mentions:
+                              type: array
+                              items:
+                                type: string
+                              description: Instagram handles mentioned in the caption.
+                            stat:
+                              type: object
+                              properties:
+                                likes_count_enabled:
+                                  type: boolean
+                                  description: Whether the like count is publicly visible on Instagram; when `false`, `likes` may be hidden or zeroed.
+                                likes:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of likes on the post.
+                                comments:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of comments on the post.
+                                shares:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of shares on the post.
+                                plays:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of plays; populated for reels only.
+                              description: Engagement statistics for the post.
+                        description: Up to 10 of the artist's top Instagram posts, ranked by engagement; empty when no data is available.
+                      top_reels:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            user_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram numeric user ID of the posting account.
+                            username:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram handle of the posting account.
+                            user_picture:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the posting account's profile picture.
+                            user_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the posting account's Instagram profile.
+                            type:
+                              type:
+                              - string
+                              - 'null'
+                              description: Post media type, e.g. 'photo' or 'video'.
+                            post_id:
+                              type:
+                              - string
+                              - 'null'
+                              description: Instagram post identifier.
+                            created:
+                              type:
+                              - string
+                              - 'null'
+                              description: ISO 8601 timestamp of when the post was created.
+                            text:
+                              type:
+                              - string
+                              - 'null'
+                              description: Caption or text content of the post.
+                            image:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the post image or, for videos, the video thumbnail.
+                            thumbnail:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the post thumbnail image.
+                            link:
+                              type:
+                              - string
+                              - 'null'
+                              description: Direct URL to the post on Instagram.
+                            mentions:
+                              type: array
+                              items:
+                                type: string
+                              description: Instagram handles mentioned in the caption.
+                            stat:
+                              type: object
+                              properties:
+                                likes_count_enabled:
+                                  type: boolean
+                                  description: Whether the like count is publicly visible on Instagram; when `false`, `likes` may be hidden or zeroed.
+                                likes:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of likes on the post.
+                                comments:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of comments on the post.
+                                shares:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of shares on the post.
+                                plays:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  description: Total number of plays; populated for reels only.
+                              description: Engagement statistics for the post.
+                        description: Up to 10 of the artist's top Instagram reels, ranked by engagement; empty when no data is available.
+                    required:
+                    - top_posts
+                    - top_reels
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      top_posts:
+                      - user_id: '1707509864'
+                        username: honeymoon
+                        user_picture: https://example.com/user_picture.jpg
+                        user_url: https://www.instagram.com/honeymoon
+                        type: photo
+                        post_id: '3730445037202445518_1707509864'
+                        created: '2025-09-26T21:55:24.000+00:00'
+                        image: https://example.com/post_image.jpg
+                        thumbnail: https://example.com/post_thumbnail.jpg
+                        link: https://www.instagram.com/p/DPFM_8gkhTO/
+                        mentions:
+                        - jeremy.dufrene
+                        - ralphlauren
+                        - tiffanyandco
+                        stat:
+                          likes_count_enabled: true
+                          likes: 6717673
+                          comments: 40955
+                          shares: 301160
+                      top_reels:
+                      - user_id: '1707509864'
+                        username: honeymoon
+                        user_picture: https://example.com/user_picture.jpg
+                        user_url: https://www.instagram.com/honeymoon
+                        type: video
+                        post_id: '3394225214193878190_49509959'
+                        created: '2024-06-20T00:29:37.000+00:00'
+                        text: Tough
+                        image: https://example.com/reel_image.jpg
+                        thumbnail: https://example.com/reel_thumbnail.jpg
+                        link: https://www.instagram.com/p/C8atdlTs0Su/
+                        stat:
+                          likes_count_enabled: true
+                          likes: 3021396
+                          comments: 20994
+                          plays: 46374448
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

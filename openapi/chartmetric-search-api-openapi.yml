@@ -1,91 +1,813 @@
 openapi: 3.2.0
 info:
-  title: Chartmetric Search API
-  description: REST API for the Chartmetric music analytics and artist-intelligence platform. Provides programmatic access to artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and other platforms, plus a unified search endpoint. Authentication uses a short-lived Bearer access token minted by exchanging a long-lived refresh token at POST /token.
-  termsOfService: https://chartmetric.com/terms-of-service
+  title: Chartmetric Developer Search API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
   contact:
-    name: Chartmetric Support
-    email: hi@chartmetric.com
-    url: https://apidocs.chartmetric.com/
-  version: '1.0'
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
 servers:
-- url: https://api.chartmetric.com/api
-  description: Chartmetric production API
+- url: https://api.chartmetric.com
+  description: Production
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
 - name: Search
-  description: Unified entity search.
+  description: Search across Chartmetric entities. Endpoints resolve a free-text query to artists, tracks, albums, playlists and curators, with a dedicated search for social handles and profile URLs.
 paths:
-  /search:
+  /api/search:
     get:
-      operationId: search
+      summary: Chartmetric Search
       tags:
       - Search
-      summary: Search entities
-      description: Free-text search across artists, tracks, albums, playlists, curators, and other entity types, returning Chartmetric IDs for follow-on lookups.
+      operationId: searchAll
+      description: Search tracks, albums, artists, curators, playlists, stations, cities, songwriters, and more with a single query. Also accepts DSP URLs (Spotify, Apple Music, Deezer, etc.). The shape below is the default (`type=all`) response; narrowing via `type=artists|tracks|playlists|...` returns only the matching bucket. Enabling `beta=true` switches to the beta global-search engine which returns `suggestions` entries instead.
       parameters:
       - name: q
         in: query
+        schema:
+          type: string
+          oneOf:
+          - type: string
+            maxLength: 100
+          description: Search query. Free text matched across artists, tracks, albums, playlists, curators, stations, cities, and songwriters; or a streaming/social URL to look up a single entity by its native ID.
         required: true
-        description: Search query string.
-        schema:
-          type: string
-      - name: type
-        in: query
-        required: false
-        description: Comma-separated entity types to restrict the search to (for example artists, tracks, albums, playlists, curators).
-        schema:
-          type: string
+        description: Search query. Free text matched across artists, tracks, albums, playlists, curators, stations, cities, and songwriters; or a streaming/social URL to look up a single entity by its native ID.
+        examples:
+          default:
+            value: example
       - name: limit
         in: query
-        required: false
         schema:
           type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of items to return per request.
           default: 10
+        required: false
+        description: Maximum number of items to return per request.
       - name: offset
         in: query
-        required: false
         schema:
           type: integer
-          default: 0
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - all
+          - artists
+          - tracks
+          - playlists
+          - curators
+          - albums
+          - stations
+          - cities
+          - songwriters
+          description: Restrict the search to a single entity bucket. One of `all`, `artists`, `tracks`, `playlists`, `curators`, `albums`, `stations`, `cities`, `songwriters`. Defaults to `all`.
+          default: all
+        required: false
+        description: Restrict the search to a single entity bucket. One of `all`, `artists`, `tracks`, `playlists`, `curators`, `albums`, `stations`, `cities`, `songwriters`. Defaults to `all`.
+      - name: beta
+        in: query
+        schema:
+          type: boolean
+          description: If true, use the beta global-search engine which returns a flat `suggestions` list with `match_strength` and `target` per item instead of bucketed results.
+          default: false
+        required: false
+        description: If true, use the beta global-search engine which returns a flat `suggestions` list with `match_strength` and `target` per item instead of bucketed results.
+      - name: platforms
+        in: query
+        schema:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              enum:
+              - cm
+              - spotify
+              - itunes
+              - applemusic
+              - deezer
+              - amazon
+              - youtube
+              - tidal
+              - soundcloud
+              - acr
+          description: Restrict beta search to these platforms. Only valid when `beta=true`. One or more of `cm`, `spotify`, `itunes`, `applemusic`, `deezer`, `amazon`, `youtube`, `tidal`, `soundcloud`, `acr`.
+        required: false
+        description: Restrict beta search to these platforms. Only valid when `beta=true`. One or more of `cm`, `spotify`, `itunes`, `applemusic`, `deezer`, `amazon`, `youtube`, `tidal`, `soundcloud`, `acr`.
+      - name: triggerCitiesOnly
+        in: query
+        schema:
+          type: boolean
+          description: If true, restrict city results to Chartmetric Trigger Cities. Available for both beta and non-beta search.
+          default: false
+        required: false
+        description: If true, restrict city results to Chartmetric Trigger Cities. Available for both beta and non-beta search.
       responses:
         '200':
-          description: Search results grouped by entity type.
+          description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchResponse'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        error:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      artists:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric artist ID.
+                            name:
+                              type: string
+                              description: Artist name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist image URL.
+                            isni:
+                              type:
+                              - string
+                              - 'null'
+                              description: International Standard Name Identifier (ISNI) of the artist.
+                            sp_followers:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Spotify follower count.
+                            sp_monthly_listeners:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              description: Spotify monthly listener count.
+                            cm_artist_score:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Chartmetric artist score (composite popularity metric).
+                          required:
+                          - id
+                          - name
+                        description: Artist matches.
+                      playlists:
+                        type: object
+                        properties:
+                          spotify:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric playlist ID.
+                                name:
+                                  type: string
+                                  description: Playlist name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist cover image URL.
+                                owner_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist owner / curator's display name.
+                              required:
+                              - id
+                              - name
+                            description: Spotify playlist matches.
+                          applemusic:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric playlist ID.
+                                name:
+                                  type: string
+                                  description: Playlist name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist cover image URL.
+                                owner_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist owner / curator's display name.
+                              required:
+                              - id
+                              - name
+                            description: Apple Music playlist matches.
+                          deezer:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  anyOf:
+                                  - type: string
+                                  - type: integer
+                                    minimum: 0
+                                    maximum: 2147483647
+                                  description: Chartmetric playlist ID. May be returned as a string for platform-native IDs.
+                                name:
+                                  type: string
+                                  description: Playlist name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist cover image URL.
+                                owner_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist owner / curator's display name.
+                              required:
+                              - id
+                              - name
+                            description: Deezer playlist matches.
+                          amazon:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  anyOf:
+                                  - type: string
+                                  - type: integer
+                                    minimum: 0
+                                    maximum: 2147483647
+                                  description: Chartmetric playlist ID. May be returned as a string for platform-native IDs.
+                                name:
+                                  type: string
+                                  description: Playlist name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist cover image URL.
+                                owner_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist owner / curator's display name.
+                              required:
+                              - id
+                              - name
+                            description: Amazon Music playlist matches.
+                          youtube:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  description: YouTube playlist ID.
+                                name:
+                                  type: string
+                                  description: Playlist name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Playlist cover image URL.
+                              required:
+                              - id
+                              - name
+                            description: YouTube playlist matches.
+                          soundcloud:
+                            type: array
+                            items: {}
+                            description: SoundCloud playlist matches.
+                        required:
+                        - spotify
+                        - applemusic
+                        - deezer
+                        - amazon
+                        - youtube
+                        - soundcloud
+                        description: Playlist matches grouped by streaming platform.
+                      tracks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Chartmetric track ID. May be returned as a string or number.
+                            name:
+                              type: string
+                              description: Track name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Track cover image URL.
+                            isrc:
+                              type:
+                              - string
+                              - 'null'
+                              description: International Standard Recording Code identifying the track.
+                            artist_names:
+                              type: array
+                              items:
+                                type: string
+                              description: Artist names credited on the track.
+                          required:
+                          - id
+                          - name
+                          - artist_names
+                        description: Track matches.
+                      curators:
+                        type: object
+                        properties:
+                          spotify:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric curator ID.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator's display name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator profile image URL.
+                              required:
+                              - id
+                            description: Spotify curator matches.
+                          applemusic:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric curator ID.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator's display name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator profile image URL.
+                              required:
+                              - id
+                            description: Apple Music curator matches.
+                          deezer:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  anyOf:
+                                  - type: string
+                                  - type: integer
+                                    minimum: 0
+                                    maximum: 2147483647
+                                  description: Chartmetric curator ID. May be returned as a string for platform-native IDs.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator's display name.
+                                image_url:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Curator profile image URL.
+                              required:
+                              - id
+                            description: Deezer curator matches.
+                          amazon:
+                            type: array
+                            items: {}
+                            description: Amazon Music curator matches.
+                          youtube:
+                            type: array
+                            items: {}
+                            description: YouTube curator matches.
+                        required:
+                        - spotify
+                        - applemusic
+                        - deezer
+                        - amazon
+                        - youtube
+                        description: Curator matches grouped by streaming platform.
+                      albums:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric album ID.
+                            name:
+                              type: string
+                              description: Album name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album cover image URL.
+                            label:
+                              type:
+                              - string
+                              - 'null'
+                              description: Record label that released the album.
+                          required:
+                          - id
+                          - name
+                        description: Album matches.
+                      stations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric station ID.
+                            name:
+                              type: string
+                              description: Radio/SiriusXM station name.
+                            genre:
+                              type:
+                              - string
+                              - 'null'
+                              description: Genre format of the station.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Station logo or image URL.
+                            station_city:
+                              type:
+                              - string
+                              - 'null'
+                              description: City where the station is broadcast from.
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country where the station is broadcast from.
+                          required:
+                          - id
+                          - name
+                        description: Radio and SiriusXM station matches.
+                      labels:
+                        type: array
+                        items: {}
+                        description: Record label matches.
+                      cities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric city ID.
+                            name:
+                              type: string
+                              description: City name.
+                            name_ascii:
+                              type:
+                              - string
+                              - 'null'
+                              description: ASCII-only transliteration of the city name.
+                            population:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: City population. Used to disambiguate same-named cities across other endpoints.
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country name.
+                            code2:
+                              type:
+                              - string
+                              - 'null'
+                              minLength: 2
+                              maxLength: 2
+                              description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                            province:
+                              type:
+                              - string
+                              - 'null'
+                              description: State, province, or first-level administrative subdivision.
+                            trigger_city:
+                              type: boolean
+                              description: Whether the city is classified as a Chartmetric Trigger City.
+                          required:
+                          - id
+                          - name
+                        description: City matches.
+                      countries:
+                        type: array
+                        items: {}
+                        description: Country matches.
+                      songwriters:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Songwriter name.
+                            doc_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric songwriter ID.
+                            artistName:
+                              type:
+                              - string
+                              - 'null'
+                              description: Linked artist name when the songwriter also performs.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Songwriter image URL.
+                          required:
+                          - doc_id
+                        description: Songwriter matches.
+                      genres:
+                        type: array
+                        items: {}
+                        description: Genre matches.
+                      festivals:
+                        type: array
+                        items: {}
+                        description: Festival matches.
+                    required:
+                    - artists
+                    - playlists
+                    - tracks
+                    - curators
+                    - albums
+                    - stations
+                    - labels
+                    - cities
+                    - songwriters
+                    - genres
+                    - festivals
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      artists:
+                      - id: 3963
+                        name: Ariana Grande
+                        image_url: https://i.scdn.co/image/ab6761610000e5eb40b5c07ab77b6b1a9075fdc0
+                        isni: 0000000059110272
+                        sp_followers: 97135043
+                        sp_monthly_listeners: 80733093
+                        cm_artist_score: 495952
+                      playlists:
+                        spotify:
+                        - id: 741236
+                          name: 'Ariana Grande: Best Of'
+                          image_url: https://i.scdn.co/image/ab67706c0000bebb4d5b3fbd576a2254f137f5e1
+                          owner_name: arianagrandeofficial
+                        applemusic: []
+                        deezer:
+                        - id: '1147053693'
+                          name: Ariana Grande Selection
+                          image_url: https://api.deezer.com/playlist/1147053693/image
+                          owner_name: Tigo El Salvador
+                        amazon: []
+                        youtube: []
+                        soundcloud: []
+                      tracks:
+                      - id: '27590886'
+                        name: Ariana
+                        image_url: https://i.scdn.co/image/9fa1a27e9e43b48a822e23285d1a13b64f74d311
+                        isrc: GBKPL1977961
+                        artist_names:
+                        - Tony Anderson
+                      curators:
+                        spotify:
+                        - id: 59081
+                          name: arianagrandeofficial
+                          image_url: null
+                        applemusic: []
+                        deezer: []
+                        amazon: []
+                        youtube: []
+                      albums:
+                      - id: 15091594
+                        name: Ariana
+                        image_url: https://i.scdn.co/image/ab67616d0000b2737b0314e32f28c3aa6bcab762
+                        label: Dfideliz
+                      stations: []
+                      labels: []
+                      cities:
+                      - id: 16166
+                        name: Ariana
+                        name_ascii: Ariana
+                        population: 97687
+                        country: Tunisia
+                        code2: TN
+                        province: null
+                        trigger_city: false
+                      countries: []
+                      songwriters:
+                      - name: Nicole Ariana
+                        doc_id: 1564636
+                        artistName: Nicole Ariana
+                        image_url: null
+                      genres: []
+                      festivals: []
+  /api/search/social:
+    get:
+      summary: Chartmetric Social Search
+      tags:
+      - Search
+      operationId: searchSocial
+      description: Search artists, curators, radio/SiriusXM stations, and songwriters by their social media URLs. DSP links (Spotify, Apple Music, etc.) should be resolved via `/api/{entity}/{type}/{id}/get-ids` instead.
+      parameters:
+      - name: url
+        in: query
+        schema:
           type: string
-          description: Human-readable error message.
-        status:
-          type: integer
-          description: HTTP status code.
-    SearchResponse:
-      type: object
-      properties:
-        obj:
-          type: object
-          description: Search results grouped by entity type (artists, tracks, albums, playlists, curators).
-          additionalProperties: true
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          description: Social media URL to resolve (Instagram, TikTok, X/Twitter, YouTube, Facebook, etc.). DSP links should be resolved via `/api/{entity}/{type}/{id}/get-ids` instead.
+        required: true
+        description: Social media URL to resolve (Instagram, TikTok, X/Twitter, YouTube, Facebook, etc.). DSP links should be resolved via `/api/{entity}/{type}/{id}/get-ids` instead.
+        examples:
+          default:
+            value: https://example.com
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - all
+          - artists
+          - radio
+          - siriusxm
+          - songwriters
+          - curators
+          description: Restrict the search to a single entity type. One of `all`, `artists`, `radio`, `siriusxm`, `songwriters`, `curators`. Defaults to `all`.
+          default: all
+        required: false
+        description: Restrict the search to a single entity type. One of `all`, `artists`, `radio`, `siriusxm`, `songwriters`, `curators`. Defaults to `all`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          anyOf:
+                          - type: string
+                          - type: number
+                            format: float
+                          description: Chartmetric ID of the resolved entity. Numeric for artist/curator, string for platform-native IDs (e.g. SiriusXM channel slug).
+                        type:
+                          type:
+                          - string
+                          - 'null'
+                          description: Entity type of the match (e.g. `artist`, `curator`, `radio`, `siriusxm`, `songwriter`).
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Entity name. Currently populated reliably only for artists.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Entity image URL. Currently populated reliably only for artists.
+                      required:
+                      - id
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 2762
+                      type: artist
+                      name: Taylor Swift
+                      image_url: https://i.scdn.co/image/ab67616100005174f173136b94ae2f75f49f8b2b
+components:
   securitySchemes:
-    bearerAuth:
+    BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /token.
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

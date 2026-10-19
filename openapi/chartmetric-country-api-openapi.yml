@@ -1,0 +1,378 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Country API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Country
+  description: Country-level rankings. Endpoints return artist rankings for a country, broken down by area, ranking type and sub-area.
+paths:
+  /api/country/{code2}/artist-rankings/{area}/{type}/{subArea}:
+    get:
+      summary: List Artist Rankings by Country
+      tags:
+      - Country
+      operationId: listCountryArtistRankings
+      description: Artist rankings within a country, filtered by `area` (`local` | `foreign`), `type` (`charts` | `audience` | `growth`) and `subArea` (`local` | `global`). The combination `foreign-*-global` is not supported and returns 400. The combination `local-audience-global` uses fan-base rank via Elasticsearch and returns a reduced field set without `local_rank_trend`. `local_rank_trend` is populated for `type=audience` rankings, except the `local-audience-global` combination.
+      parameters:
+      - name: code2
+        in: path
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: true
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        examples:
+          default:
+            value: US
+      - name: area
+        in: path
+        schema:
+          type: string
+          enum:
+          - local
+          - foreign
+          description: Whether to rank artists native to the country (`local`) or from outside it (`foreign`). One of `local`, `foreign`.
+        required: true
+        description: Whether to rank artists native to the country (`local`) or from outside it (`foreign`). One of `local`, `foreign`.
+        examples:
+          default:
+            value: local
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - charts
+          - audience
+          - growth
+          description: 'Ranking criterion: `charts` (chart performance), `audience` (audience size), or `growth` (trending growth).'
+        required: true
+        description: 'Ranking criterion: `charts` (chart performance), `audience` (audience size), or `growth` (trending growth).'
+        examples:
+          default:
+            value: charts
+      - name: subArea
+        in: path
+        schema:
+          anyOf:
+          - type: string
+            enum:
+            - local
+            x-required: true
+          - type: string
+            enum:
+            - local
+            - global
+            x-required: true
+          description: 'Ranking scope: `local` (within the country) or `global` (worldwide). When `area=foreign`, only `local` is allowed; the `foreign-*-global` combination returns 400.'
+        required: true
+        description: 'Ranking scope: `local` (within the country) or `global` (worldwide). When `area=foreign`, only `local` is allowed; the `foreign-*-global` combination returns 400.'
+        examples:
+          default:
+            value: local
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          description: Maximum number of items to return per request.
+          default: 10
+        required: false
+        description: Maximum number of items to return per request.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric artist ID.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist name.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist image URL.
+                        isni:
+                          type:
+                          - string
+                          - 'null'
+                          description: International Standard Name Identifier (ISNI) of the artist.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist's home country (ISO 3166-1 alpha-2 code).
+                        hometown_city:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist's hometown city.
+                        current_city:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist's current city.
+                        verified:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: Whether the artist is verified on Spotify.
+                        band:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: Whether the artist is a band/group rather than a solo artist.
+                        gender:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist gender (e.g. `male`, `female`).
+                        sp_followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify follower count.
+                        sp_popularity:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify popularity score (0–100).
+                        sp_monthly_listeners:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify monthly listener count.
+                        deezer_fans:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Deezer fan count.
+                        cm_artist_rank:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Global Chartmetric artist rank.
+                        cm_artist_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric artist score (0–100), aligned with `cm_artist_rank`.
+                        primary_genre_smart:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          - type: object
+                            properties: {}
+                          nullable: true
+                          description: Primary smart genre ID (integer) for the artist; legacy shapes may surface as a string or object.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Genre tags associated with the artist (e.g. `country pop`, `indie rock`).
+                        spotify_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Spotify artist IDs linked to this Chartmetric artist.
+                        itunes_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: integer
+                          description: iTunes artist IDs linked to this Chartmetric artist.
+                        deezer_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Deezer artist IDs linked to this Chartmetric artist.
+                        amazon_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Amazon Music artist IDs linked to this Chartmetric artist.
+                        local_rank:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Position within the requested ranking (1-based).
+                        local_rank_trend:
+                          type: array
+                          items:
+                            type: object
+                            properties: {}
+                          description: Recent rank-trend snapshots. Populated for `type=audience` rankings, except the `local-audience-global` combination which omits trends.
+                      required:
+                      - id
+                      - local_rank
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 1093307
+                      name: Ella Langley
+                      image_url: https://i.scdn.co/image/ab6761610000e5ebc4670378a4188c3174ef2ca9
+                      isni: null
+                      code2: US
+                      hometown_city: null
+                      current_city: null
+                      verified: true
+                      band: false
+                      gender: null
+                      sp_followers: 1321282
+                      sp_popularity: 86
+                      sp_monthly_listeners: 24925655
+                      deezer_fans: 14464
+                      cm_artist_rank: 121
+                      cm_artist_score: 96.39
+                      primary_genre_smart: 501131
+                      tags:
+                      - country
+                      - us country
+                      spotify_artist_ids:
+                      - 6BRxQ8cD3eqnrVj6WKDok8
+                      itunes_artist_ids:
+                      - 1384373733
+                      deezer_artist_ids:
+                      - '14867123'
+                      amazon_artist_ids:
+                      - B07D3JZFW9
+                      local_rank: 1
+                    - id: 212715
+                      name: Morgan Wallen
+                      image_url: https://i.scdn.co/image/ab6761610000e5eb47de0bbc22f08b5ebe14bd6e
+                      isni: 0000000467316966
+                      code2: US
+                      hometown_city: Knoxville
+                      current_city: Nashville
+                      verified: false
+                      band: false
+                      gender: male
+                      sp_followers: 15244094
+                      sp_popularity: 90
+                      sp_monthly_listeners: 33085833
+                      deezer_fans: 280609
+                      cm_artist_rank: 115
+                      cm_artist_score: 96.46
+                      primary_genre_smart: 504354
+                      tags:
+                      - country pop
+                      - new country
+                      - country rock
+                      - us country
+                      - us pop
+                      spotify_artist_ids:
+                      - 4oUHIQIBe0LHzYfvXNW4QM
+                      itunes_artist_ids:
+                      - 829142092
+                      deezer_artist_ids:
+                      - '7188840'
+                      amazon_artist_ids:
+                      - B00QNXU7TW
+                      local_rank: 2
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

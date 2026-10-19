@@ -1,0 +1,242 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Genre API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Genre
+  description: Chartmetric's genre taxonomy, used to filter artists, tracks and charts. Endpoints list all genres and return a single genre by ID.
+paths:
+  /api/genres:
+    get:
+      summary: List Chartmetric Genres
+      tags:
+      - Genre
+      operationId: listGenres
+      description: List Chartmetric genres, optionally filtered by `name`. Pass `isLegacy=true` to receive the legacy `genre` taxonomy instead of `genre_v2`.
+      parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+          description: Case-insensitive substring filter on genre name; omit to return all genres.
+        required: false
+        description: Case-insensitive substring filter on genre name; omit to return all genres.
+      - name: isLegacy
+        in: query
+        schema:
+          type: boolean
+          description: When true, returns the legacy `genre` taxonomy; when false (default), returns the modern `genre_v2` taxonomy.
+          default: false
+        required: false
+        description: When true, returns the legacy `genre` taxonomy; when false (default), returns the modern `genre_v2` taxonomy.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Chartmetric genre ID.
+                        name:
+                          type: string
+                          description: Genre name (e.g. `K-Pop`, `Mandopop`).
+                      required:
+                      - id
+                      - name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 462862
+                      name: Devotional & Spiritual
+                    - id: 462863
+                      name: Mandopop
+  /api/genres/{id}:
+    get:
+      summary: Get Genre by ID
+      tags:
+      - Genre
+      operationId: getGenreById
+      description: Fetch a single Chartmetric genre by its ID.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric genre ID.
+        required: true
+        description: Chartmetric genre ID.
+        examples:
+          default:
+            value: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      id:
+                        type: integer
+                        description: Chartmetric genre ID.
+                      name:
+                        type: string
+                        description: Genre name (e.g. `K-Pop`).
+                      type:
+                        type: string
+                        enum:
+                        - genre
+                        - genre_v2
+                        description: 'Taxonomy the genre belongs to: `genre_v2` is the modern Chartmetric taxonomy, `genre` is the legacy taxonomy.'
+                      source:
+                        type: string
+                        description: Origin of the genre record (e.g. `cm` for Chartmetric-curated, `spotify` for Spotify-derived sub-genres).
+                    required:
+                    - id
+                    - name
+                    - type
+                    - source
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      id: 462925
+                      name: K-Pop
+                      type: genre_v2
+                      source: cm
+  /api/genre:
+    get:
+      summary: List Chartmetric Genres (legacy path)
+      tags:
+      - Genre
+      operationId: listGenresLegacy
+      description: List Chartmetric genres. Accepts `isLegacy` to switch between `genre_v2` (default) and the legacy `genre` taxonomy. Equivalent response shape to `GET /api/genres`.
+      parameters:
+      - name: isLegacy
+        in: query
+        schema:
+          type: boolean
+          description: When true, returns the legacy `genre` taxonomy; when false (default), returns the modern `genre_v2` taxonomy.
+          default: false
+        required: false
+        description: When true, returns the legacy `genre` taxonomy; when false (default), returns the modern `genre_v2` taxonomy.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Chartmetric genre ID.
+                        name:
+                          type: string
+                          description: Genre name (e.g. `pop`, `hip-hop/rap`).
+                      required:
+                      - id
+                      - name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 501120
+                      name: pop
+                    - id: 501121
+                      name: hip-hop/rap
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

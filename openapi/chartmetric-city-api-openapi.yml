@@ -1,0 +1,1072 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer City API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: City
+  description: Cities used for geographic breakdowns of audience and consumption data. Endpoints list the cities of a country and return the top artists or tracks in a city for a given platform.
+paths:
+  /api/cities:
+    get:
+      summary: List Cities by Country
+      tags:
+      - City
+      operationId: listCities
+      description: List cities within a country (ISO 3166-1 alpha-2 `country_code`). Optionally narrow to a single city by `city_id`.
+      parameters:
+      - name: country_code
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AL
+          - AM
+          - AO
+          - AQ
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AX
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CW
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - EH
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GS
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - ID
+          - IE
+          - IL
+          - IM
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PS
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SJ
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SX
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TM
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VI
+          - VN
+          - VU
+          - WF
+          - WS
+          - XK
+          - XW
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: true
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        examples:
+          default:
+            value: AD
+      - name: city_id
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric city ID; narrows the result set to a single city.
+        required: false
+        description: Chartmetric city ID; narrows the result set to a single city.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        city_id:
+                          type: integer
+                          description: Chartmetric city ID.
+                        city_name:
+                          type: string
+                          description: City name as stored in Chartmetric.
+                        latitude:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: City latitude in decimal degrees (WGS84).
+                        longitude:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: City longitude in decimal degrees (WGS84).
+                        population:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Estimated city population.
+                        province:
+                          type:
+                          - string
+                          - 'null'
+                          description: Province, state, or first-level administrative subdivision the city belongs to.
+                        locality:
+                          type:
+                          - string
+                          - 'null'
+                          description: Locality (typically the same as `city_name`, occasionally a parent locality).
+                        country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Country name the city belongs to.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of a representative image for the city, when available.
+                        iso3:
+                          type:
+                          - string
+                          - 'null'
+                          minLength: 3
+                          maxLength: 3
+                          description: ISO 3166-1 alpha-3 country code of the city's country (3 letters, e.g. 'USA', 'BRA').
+                      required:
+                      - city_id
+                      - city_name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - city_id: 11778
+                      city_name: Culpeper
+                      latitude: 38.4705
+                      longitude: -78.0001
+                      population: 19986
+                      province: null
+                      locality: Culpeper
+                      country: United States
+                      image_url: null
+                      iso3: USA
+  /api/city/{id}/{domain}/top-artists:
+    get:
+      summary: List Top Artists in a City
+      tags:
+      - City
+      operationId: listCityTopArtists
+      description: Top artists in a city for a given platform (`domain` in `spotify | youtube | shazam | radio | instagram`). Each item merges per-platform stats (`count`, and `username` when `domain=instagram`) with basic artist info (IDs, audience stats, genre tags, latest release). `count` is surfaced as a string when the underlying aggregate returns a `BIGINT`.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric city ID.
+        required: true
+        description: Chartmetric city ID.
+        examples:
+          default:
+            value: 1
+      - name: domain
+        in: path
+        schema:
+          type: string
+          enum:
+          - spotify
+          - youtube
+          - shazam
+          - radio
+          - instagram
+          description: Platform whose audience signal ranks the artists (one of `spotify | youtube | shazam | radio | instagram`).
+        required: true
+        description: Platform whose audience signal ranks the artists (one of `spotify | youtube | shazam | radio | instagram`).
+        examples:
+          default:
+            value: spotify
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        count:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          nullable: true
+                          description: 'Local audience signal: `spotify` → monthly listeners; `youtube` → daily views; `instagram` → followers; `shazam`/`radio` → occurrences. May arrive as a string when the aggregate is `BIGINT`.'
+                        username:
+                          type:
+                          - string
+                          - 'null'
+                          description: Instagram username of the artist; only populated when `domain=instagram`.
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric artist ID.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist display name.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of the artist profile image.
+                        isni:
+                          type:
+                          - string
+                          - 'null'
+                          description: International Standard Name Identifier (ISNI) of the artist.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code of the artist's primary country (2 letters, e.g. 'us', 'br').
+                        hometown_city:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist's hometown city.
+                        current_city:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist's current city.
+                        verified:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: Whether the artist is verified on the underlying platform.
+                        band:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True when the artist is a band/group rather than a solo act.
+                        gender:
+                          type:
+                          - string
+                          - 'null'
+                          description: Artist gender label (e.g. 'male', 'female', 'mixed', 'non-binary').
+                        sp_followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify follower count.
+                        sp_popularity:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify popularity score (0–100).
+                        sp_monthly_listeners:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Spotify monthly listeners.
+                        deezer_fans:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Deezer fan count.
+                        cm_artist_rank:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Global Chartmetric artist rank (1 is highest).
+                        cm_artist_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric artist score (0–100).
+                        primary_genre_smart:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          - type: object
+                            properties: {}
+                          nullable: true
+                          description: Primary genre under Chartmetric's smart-genre taxonomy; surfaced as an ID, a name, or a `{id, name}` object depending on the join.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: Genre tags associated with the artist.
+                        spotify_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Spotify artist IDs linked to this Chartmetric artist.
+                        itunes_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - integer
+                            - 'null'
+                          description: iTunes/Apple Music artist IDs linked to this Chartmetric artist.
+                        deezer_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Deezer artist IDs linked to this Chartmetric artist.
+                        amazon_artist_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Amazon Music artist IDs linked to this Chartmetric artist.
+                        latest_release:
+                          type:
+                          - object
+                          - 'null'
+                          properties:
+                            cm_album:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Chartmetric album ID of the most recent release.
+                            album_name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Album title.
+                            release_date:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: Album release date (ISO 8601).
+                            upc:
+                              type:
+                              - string
+                              - 'null'
+                              description: Universal Product Code identifying the release.
+                            label:
+                              type:
+                              - string
+                              - 'null'
+                              description: Record label that released the album.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: URL of the album cover image.
+                          description: Most recent album release attributed to this artist; `null` when the artist has no release on file.
+                      required:
+                      - id
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - count: '258'
+                      id: 1401297
+                      name: Pop Smoke
+                      image_url: https://i.scdn.co/image/8f0a45ff4868c7868a7996b57da64f2e89042e26
+                      isni: null
+                      code2: us
+                      hometown_city: null
+                      current_city: null
+                      verified: false
+                      band: false
+                      gender: null
+                      sp_followers: 1374300
+                      sp_popularity: 95
+                      sp_monthly_listeners: 27687238
+                      deezer_fans: 181349
+                      cm_artist_rank: 37
+                      cm_artist_score: 92.4
+                      primary_genre_smart: 501121
+                      tags:
+                      - rap
+                      spotify_artist_ids:
+                      - 0eDvMgVFoNV3TpwtrVCoTj
+                      itunes_artist_ids:
+                      - 1450601383
+                      deezer_artist_ids:
+                      - '58447102'
+                      amazon_artist_ids:
+                      - B07N6R3268
+                      latest_release:
+                        cm_album: 6591557
+                        album_name: 今は亡きあの人たち
+                        release_date: '2020-08-19T07:00:00.000Z'
+                        upc: '602435142609'
+                        label: UMG Recordings, Inc.
+                        image_url: https://i.scdn.co/image/ab67616d0000b27349066d2258ad2e46955e2381
+  /api/city/{id}/{domain}/top-tracks:
+    get:
+      summary: List Top Tracks in a City
+      tags:
+      - City
+      operationId: listCityTopTracks
+      description: Top tracks in a city for a given platform (`domain` in `youtube | shazam | radio`). Each item merges per-platform stats with basic track metadata (cm_track, artists, album info, genre tags). `position_stats` is only populated when `domain=shazam`. `count` is surfaced as a string when the underlying aggregate returns a `BIGINT`.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric city ID.
+        required: true
+        description: Chartmetric city ID.
+        examples:
+          default:
+            value: 1
+      - name: domain
+        in: path
+        schema:
+          type: string
+          enum:
+          - youtube
+          - radio
+          - shazam
+          description: Platform whose audience signal ranks the tracks (one of `youtube | shazam | radio`).
+        required: true
+        description: Platform whose audience signal ranks the tracks (one of `youtube | shazam | radio`).
+        examples:
+          default:
+            value: youtube
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        isrc:
+                          type: string
+                          description: International Standard Recording Code identifying the track.
+                        count:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          nullable: true
+                          description: 'Local audience signal in this city for the requested `domain`: YouTube daily views or Shazam/radio occurrences. Returned as a string when the underlying aggregate is `BIGINT`.'
+                        position_stats:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              timestp:
+                                anyOf:
+                                - type: string
+                                  format: date-time
+                                nullable: true
+                                description: Timestamp of the chart sample.
+                              position:
+                                type:
+                                - integer
+                                - 'null'
+                                description: Track position on the chart at this timestamp (1 is highest).
+                          description: Chart position history for this track in the city; only populated when `domain=shazam`.
+                        id:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Chartmetric track ID. Same value as `cm_track`.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Track title.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of the track artwork.
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Free-form description for the track, when available.
+                        created_at:
+                          anyOf:
+                          - type: string
+                            format: date-time
+                          nullable: true
+                          description: Timestamp the track was first ingested into Chartmetric (ISO 8601).
+                        modified_at:
+                          anyOf:
+                          - type: string
+                            format: date-time
+                          nullable: true
+                          description: Timestamp the track metadata was last updated (ISO 8601).
+                        tags:
+                          anyOf:
+                          - type: string
+                          - type: array
+                            items:
+                              type: string
+                          nullable: true
+                          description: Genre tags for the track; either a comma-separated string or an array of tag strings depending on the upstream payload.
+                        cm_track:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Chartmetric track ID.
+                        cm_artist:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: integer
+                          description: Chartmetric artist IDs credited on this track.
+                        artist_names:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Display names of the credited artists, aligned with `cm_artist`.
+                        code2s:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: ISO 3166-1 alpha-2 country codes of the credited artists, aligned with `cm_artist`.
+                        artist_images:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Profile image URLs of the credited artists, aligned with `cm_artist`.
+                        artist_covers:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Cover/banner image URLs of the credited artists, aligned with `cm_artist`.
+                        artists:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type:
+                                - integer
+                                - 'null'
+                                description: Chartmetric artist ID.
+                              name:
+                                type:
+                                - string
+                                - 'null'
+                                description: Artist display name.
+                          description: Credited artists as `{id, name}` objects; equivalent to zipping `cm_artist` with `artist_names`.
+                        spotify_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Spotify track IDs linked to this Chartmetric track.
+                        spotify_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Spotify album IDs the track appears on.
+                        spotify_duration_ms:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Track duration on Spotify in milliseconds.
+                        itunes_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: iTunes/Apple Music track IDs linked to this Chartmetric track.
+                        itunes_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: iTunes/Apple Music album IDs the track appears on.
+                        storefronts:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: string
+                          description: ISO 3166-1 alpha-2 country codes of Apple Music storefronts where the iTunes IDs are valid.
+                        deezer_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Deezer track IDs linked to this Chartmetric track.
+                        deezer_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - integer
+                            - 'null'
+                          description: Deezer album IDs the track appears on.
+                        deezer_duration:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Track duration on Deezer in seconds.
+                        amazon_track_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Amazon Music track IDs linked to this Chartmetric track.
+                        amazon_album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Amazon Music album IDs the track appears on.
+                        album_ids:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - integer
+                            - 'null'
+                          description: Chartmetric album IDs the track appears on.
+                        album_names:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Album titles aligned with `album_ids`.
+                        album_upc:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Universal Product Codes of the albums the track appears on.
+                        album_label:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Record labels of the albums the track appears on.
+                        release_dates:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            anyOf:
+                            - type: string
+                              format: date-time
+                            nullable: true
+                          description: Release dates of the albums the track appears on (ISO 8601), aligned with `album_ids`.
+                      required:
+                      - isrc
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - isrc: DEA629252500
+                      count: '28'
+                      position_stats:
+                      - timestp: '2020-08-03'
+                        position: 81
+                      - timestp: '2020-08-04'
+                        position: 58
+                      id: 11291890
+                      name: Major Tom
+                      image_url: https://i.scdn.co/image/73b7f1f27769379d6796ed9300bda12d9dd3e75d
+                      description: null
+                      created_at: null
+                      modified_at: '2020-07-03T05:29:55.573Z'
+                      tags: Pop,Soundtrack,Soundtrack,Music,Pop
+                      cm_track: 11291890
+                      cm_artist:
+                      - 217598
+                      artist_names:
+                      - Peter Schilling
+                      code2s:
+                      - DE
+                      artist_images:
+                      - https://i.scdn.co/image/3f6870676468c6f14dff7df4a7a0cc57c604e258
+                      artist_covers:
+                      - null
+                      artists:
+                      - id: 217598
+                        name: Peter Schilling
+                      spotify_track_ids:
+                      - 6lXKNdOsnaLv9LwulZbxNl
+                      spotify_album_ids:
+                      - 1rYXSHYaxxQ9HclnAeVhxv
+                      spotify_duration_ms: 300266
+                      itunes_track_ids:
+                      - '40633230'
+                      itunes_album_ids:
+                      - '40633214'
+                      storefronts:
+                      - US
+                      deezer_track_ids:
+                      - '520450102'
+                      deezer_album_ids:
+                      - 67074482
+                      deezer_duration: 299
+                      amazon_track_ids: null
+                      amazon_album_ids: null
+                      album_ids:
+                      - 473527
+                      album_names:
+                      - SWR1 - Achtzig 80er
+                      album_upc:
+                      - '5099969886652'
+                      album_label:
+                      - EMM
+                      release_dates:
+                      - '2009-06-19T07:00:00.000Z'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

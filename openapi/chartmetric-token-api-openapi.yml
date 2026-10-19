@@ -1,0 +1,136 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Token API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Token
+  description: Authentication. Exchange your refresh token for a short-lived access token, which must be sent as a bearer token on every other request.
+paths:
+  /api/token:
+    post:
+      summary: Create API Access Token
+      tags:
+      - Token
+      operationId: createAccessToken
+      description: Exchange a refresh token for a short-lived JWT access token used to authorize Developer API requests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshtoken:
+                  type: string
+                  description: Long-lived refresh token issued at signup; used to mint a fresh short-lived access token.
+                  examples:
+                  - example
+              required:
+              - refreshtoken
+              additionalProperties: false
+              examples:
+              - refreshtoken: example
+            examples:
+              default:
+                value:
+                  refreshtoken: example
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 'Short-lived JWT access token to use as `Authorization: Bearer <token>` on subsequent Developer API calls.'
+                  expires_in:
+                    type: integer
+                    description: Number of seconds after which the access token expires.
+                  refresh_token:
+                    type: string
+                    description: Long-lived refresh token for obtaining a new access token (echoes the token supplied in the request).
+                  scope:
+                    type: string
+                    description: Level of access granted by the token. Currently always `api`.
+                required:
+                - token
+                - expires_in
+                - refresh_token
+                - scope
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    expires_in: 3600
+                    refresh_token: <refresh-token>
+                    scope: api
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

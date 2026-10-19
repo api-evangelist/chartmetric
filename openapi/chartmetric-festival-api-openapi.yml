@@ -1,0 +1,304 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Festival API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Festival
+  description: Music festivals tracked by Chartmetric. Endpoints return the list of festivals.
+paths:
+  /api/festival/list:
+    get:
+      summary: Festival List
+      tags:
+      - Festival
+      operationId: listFestivals
+      description: Get Chartmetric's Festival List. Supports filtering by country codes, genre IDs, event-size categories, and name search. Sort by `festivalName`, `rank`, `startDate` (default), `numberOfDays`, `eventSize`, `score`, or `totalEditions`.
+      parameters:
+      - name: code2s[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 2
+            description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+            title: code2
+          description: Filter to festivals held in these countries (ISO 3166-1 alpha-2 codes, e.g. ['US', 'GB']).
+        required: false
+        description: Filter to festivals held in these countries (ISO 3166-1 alpha-2 codes, e.g. ['US', 'GB']).
+      - name: genreIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          description: Filter to festivals matching any of these Chartmetric genre IDs.
+        required: false
+        description: Filter to festivals matching any of these Chartmetric genre IDs.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - rank
+          - score
+          - festivalName
+          - startDate
+          - numberOfDays
+          - eventSize
+          - totalEditions
+          description: Column used to sort the festival list. One of `rank`, `score`, `festivalName`, `startDate`, `numberOfDays`, `eventSize`, `totalEditions`. Defaults to `startDate`.
+          default: startDate
+        required: false
+        description: Column used to sort the festival list. One of `rank`, `score`, `festivalName`, `startDate`, `numberOfDays`, `eventSize`, `totalEditions`. Defaults to `startDate`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to false.
+          default: false
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to false.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          maxLength: 100
+          description: Case-insensitive substring filter on festival name.
+        required: false
+        description: Case-insensitive substring filter on festival name.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          description: Maximum number of items to return per request.
+          default: 10
+        required: false
+        description: Maximum number of items to return per request.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 100000
+          description: Number of items to skip from the start of the result set; bounded by the public API offset limit.
+        required: false
+        description: Number of items to skip from the start of the result set; bounded by the public API offset limit.
+      - name: eventSizes[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - small
+            - medium
+            - large
+            - mega
+          description: Filter by festival size category. One of `small`, `medium`, `large`, `mega`.
+        required: false
+        description: Filter by festival size category. One of `small`, `medium`, `large`, `mega`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type:
+                          - integer
+                          - 'null'
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric event ID for the festival.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Festival name.
+                        date:
+                          type:
+                          - string
+                          - 'null'
+                          description: Festival start date in `YYYY-MM-DD HH:MM:SS.MMM` format.
+                        numberOfDays:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of days the festival lasts.
+                        city:
+                          type:
+                          - string
+                          - 'null'
+                          description: City where the festival is held.
+                        country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Country where the festival is held (ISO 3166-1 alpha-2 code).
+                        performersCount:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of artists associated with the festival lineup.
+                        popularityRank:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Festival popularity rank (lower is more popular).
+                        eventSize:
+                          type: string
+                          description: Size category of the festival (e.g. `Mega (60K+)`, `Large`, `Medium`, `Small`).
+                        topGenres:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 2147483647
+                                description: Chartmetric genre ID.
+                              name:
+                                type: string
+                                description: Genre name.
+                            required:
+                            - id
+                            - name
+                          description: Top genres associated with the festival.
+                        links:
+                          type: object
+                          properties:
+                            jambase:
+                              type:
+                              - string
+                              - 'null'
+                              description: JamBase festival page URL, when available.
+                            songkick:
+                              type:
+                              - string
+                              - 'null'
+                              description: Songkick festival page URL, when available.
+                            seatgeek:
+                              type:
+                              - string
+                              - 'null'
+                              description: SeatGeek festival page URL, when available.
+                          description: Links to external pages about the festival.
+                      required:
+                      - id
+                      - name
+                      - date
+                      - numberOfDays
+                      - city
+                      - country
+                      - performersCount
+                      - popularityRank
+                      - eventSize
+                      - topGenres
+                      - links
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 642168
+                      name: Rock Werchter
+                      date: '2025-07-03 00:00:00.000'
+                      numberOfDays: 3
+                      city: Werchter
+                      country: BE
+                      performersCount: 89
+                      popularityRank: 21
+                      eventSize: Mega (60K+)
+                      topGenres:
+                      - id: 501120
+                        name: pop
+                      - id: 501122
+                        name: rock
+                      - id: 501124
+                        name: electronic
+                      links:
+                        jambase: https://www.jambase.com/festival/rock-werchter-2025
+                        songkick: null
+                        seatgeek: null
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

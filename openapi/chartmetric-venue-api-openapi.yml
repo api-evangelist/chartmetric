@@ -1,0 +1,347 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Venue API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Venue
+  description: Venues used for live-event and touring data. Endpoints return the list of venues.
+paths:
+  /api/venue:
+    get:
+      summary: List Venues
+      tags:
+      - Venue
+      operationId: listVenues
+      description: List Chartmetric venues. Supports filtering by country (`code2`), Chartmetric city (`cityId`), venue type (`venueType`), venue name (`search`), and capacity range (`minCapacity`/`maxCapacity`), and sorting by `name` (default), `capacity`, or `latestShowDate`. Each venue includes its most recent show and the most popular artist on record to have performed there. By default the "latest show" only considers shows that have already happened; pass `includeFutureShows=true` to allow an upcoming show to be picked instead.
+      parameters:
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Filter to venues in this country (ISO 3166-1 alpha-2 code, e.g. 'US').
+        required: false
+        description: Filter to venues in this country (ISO 3166-1 alpha-2 code, e.g. 'US').
+      - name: cityId
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Filter to venues in this Chartmetric city.
+        required: false
+        description: Filter to venues in this Chartmetric city.
+      - name: minCapacity
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Filter to venues with a capacity greater than or equal to this value.
+        required: false
+        description: Filter to venues with a capacity greater than or equal to this value.
+      - name: maxCapacity
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Filter to venues with a capacity less than or equal to this value.
+        required: false
+        description: Filter to venues with a capacity less than or equal to this value.
+      - name: venueType
+        in: query
+        schema:
+          type: string
+          enum:
+          - stadium
+          - arena
+          - amphitheater
+          - festival
+          - theater
+          - concert_hall
+          - club
+          description: Filter to venues of this type. One of `stadium`, `arena`, `amphitheater`, `festival`, `theater`, `concert_hall`, `club`.
+        required: false
+        description: Filter to venues of this type. One of `stadium`, `arena`, `amphitheater`, `festival`, `theater`, `concert_hall`, `club`.
+      - name: search
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          description: Filter to venues whose name contains this value (case-insensitive).
+        required: false
+        description: Filter to venues whose name contains this value (case-insensitive).
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - name
+          - capacity
+          - latestShowDate
+          description: Column used to sort the venue list. One of `name`, `capacity`, `latestShowDate`. Defaults to `name`.
+          default: name
+        required: false
+        description: Column used to sort the venue list. One of `name`, `capacity`, `latestShowDate`. Defaults to `name`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to false.
+          default: false
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to false.
+      - name: includeFutureShows
+        in: query
+        schema:
+          type: boolean
+          description: If true, a venue’s “latest show” may be an upcoming (future-dated) show. Defaults to false, which only considers shows that have already happened.
+          default: false
+        required: false
+        description: If true, a venue’s “latest show” may be an upcoming (future-dated) show. Defaults to false, which only considers shows that have already happened.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of venues to return. Defaults to 20, max 100.
+          default: 20
+        required: false
+        description: Maximum number of venues to return. Defaults to 20, max 100.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 100000
+          description: Number of items to skip from the start of the result set; bounded by the public API offset limit.
+        required: false
+        description: Number of items to skip from the start of the result set; bounded by the public API offset limit.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric venue ID.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Venue name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Venue image URL.
+                            city:
+                              type:
+                              - string
+                              - 'null'
+                              description: City where the venue is located.
+                            city_id:
+                              type:
+                              - integer
+                              - 'null'
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric city ID where the venue is located, or `null` if unknown.
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country where the venue is located (ISO 3166-1 alpha-2 code).
+                            lat:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Venue latitude in decimal degrees (WGS84).
+                            lng:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Venue longitude in decimal degrees (WGS84).
+                            capacity:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Approximate audience capacity of the venue.
+                            venue_type:
+                              type:
+                              - string
+                              - 'null'
+                              enum:
+                              - stadium
+                              - arena
+                              - amphitheater
+                              - festival
+                              - theater
+                              - concert_hall
+                              - club
+                              description: Coarse venue type derived from the venue name — one of `stadium`, `arena`, `amphitheater`, `festival`, `theater`, `concert_hall`, `club` — or `null` when unclassified.
+                            latest_show:
+                              type:
+                              - object
+                              - 'null'
+                              properties:
+                                date:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  format: date-time
+                                  description: Start date of the venue’s most recent show.
+                                title:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Name of the venue’s most recent show.
+                              required:
+                              - date
+                              - title
+                              description: The venue’s most recent show, or `null` if it has none on record.
+                            biggest_artist:
+                              type:
+                              - object
+                              - 'null'
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric artist ID.
+                                name:
+                                  type: string
+                                  description: Artist name.
+                              required:
+                              - id
+                              - name
+                              description: The most popular artist (by Chartmetric artist rank) to have performed at this venue, or `null` if none is on record.
+                          required:
+                          - id
+                          - name
+                          - image_url
+                          - city
+                          - city_id
+                          - country
+                          - lat
+                          - lng
+                          - capacity
+                          - venue_type
+                          - latest_show
+                          - biggest_artist
+                        description: Page of matching venues.
+                      total:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Total number of venues matching the filters, across all pages.
+                    required:
+                    - data
+                    - total
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      data:
+                      - id: 1
+                        name: Greek Theatre
+                        image_url: https://www.jambase.com/wp-content/uploads/2015/06/greek-1480x832.jpg
+                        city: Berkeley
+                        city_id: 5391959
+                        country: US
+                        lat: 37.8726
+                        lng: -122.254
+                        capacity: 8500
+                        venue_type: theater
+                        latest_show:
+                          date: '2016-07-28T00:00:00.000Z'
+                          title: Modest Mouse at Greek Theatre
+                        biggest_artist:
+                          id: 20
+                          name: Modest Mouse
+                      total: 1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

@@ -47,60 +47,6 @@ created: '2026-06-21'
 modified: '2026-06-21'
 specificationVersion: '0.23'
 apis:
-- aid: chartmetric:chartmetric-albums-api
-  name: Chartmetric Albums API
-  description: Album metadata, tracks, followers, charts, and placements.
-  humanURL: https://apidocs.chartmetric.com/
-  baseURL: https://api.chartmetric.com/api
-  tags:
-  - Albums
-  properties:
-  - type: OpenAPI
-    url: openapi/chartmetric-albums-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.chartmetric.com/
-  - type: APIReference
-    url: https://api.chartmetric.com/apidoc/
-  - type: PostmanCollection
-    url: collections/chartmetric.postman_collection.json
-  - type: OpenCollection
-    url: collections/chartmetric.opencollection.json
-- aid: chartmetric:chartmetric-artists-api
-  name: Chartmetric Artists API
-  description: Artist metadata, stats, related artists, and placements.
-  humanURL: https://apidocs.chartmetric.com/
-  baseURL: https://api.chartmetric.com/api
-  tags:
-  - Artists
-  properties:
-  - type: OpenAPI
-    url: openapi/chartmetric-artists-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.chartmetric.com/
-  - type: APIReference
-    url: https://api.chartmetric.com/apidoc/
-  - type: PostmanCollection
-    url: collections/chartmetric.postman_collection.json
-  - type: OpenCollection
-    url: collections/chartmetric.opencollection.json
-- aid: chartmetric:chartmetric-authentication-api
-  name: Chartmetric Authentication API
-  description: Exchange a refresh token for a short-lived access token.
-  humanURL: https://apidocs.chartmetric.com/
-  baseURL: https://api.chartmetric.com/api
-  tags:
-  - Authentication
-  properties:
-  - type: OpenAPI
-    url: openapi/chartmetric-authentication-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.chartmetric.com/
-  - type: APIReference
-    url: https://api.chartmetric.com/apidoc/
-  - type: PostmanCollection
-    url: collections/chartmetric.postman_collection.json
-  - type: OpenCollection
-    url: collections/chartmetric.opencollection.json
 - aid: chartmetric:chartmetric-charts-api
   name: Chartmetric Charts API
   description: Platform chart rankings and Chartmetric Score (cm-score).
@@ -111,24 +57,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/chartmetric-charts-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.chartmetric.com/
-  - type: APIReference
-    url: https://api.chartmetric.com/apidoc/
-  - type: PostmanCollection
-    url: collections/chartmetric.postman_collection.json
-  - type: OpenCollection
-    url: collections/chartmetric.opencollection.json
-- aid: chartmetric:chartmetric-playlists-api
-  name: Chartmetric Playlists API
-  description: Playlist metadata, track listings, snapshots, and evolution.
-  humanURL: https://apidocs.chartmetric.com/
-  baseURL: https://api.chartmetric.com/api
-  tags:
-  - Playlists
-  properties:
-  - type: OpenAPI
-    url: openapi/chartmetric-playlists-api-openapi.yml
   - type: Documentation
     url: https://apidocs.chartmetric.com/
   - type: APIReference
@@ -155,16 +83,302 @@ apis:
     url: collections/chartmetric.postman_collection.json
   - type: OpenCollection
     url: collections/chartmetric.opencollection.json
-- aid: chartmetric:chartmetric-tracks-api
-  name: Chartmetric Tracks API
-  description: Track metadata, stats, charts, and playlist placements.
+- aid: chartmetric:chartmetric-album-api
+  name: Chartmetric Album API
+  description: >-
+    Albums, EPs and singles as released on streaming platforms, identified by a Chartmetric album ID.
+    Endpoints cover album metadata, cross-platform ID lookup, the tracklist, per-platform stats, chart
+    appearances, and the playlists the album is featured on.
   humanURL: https://apidocs.chartmetric.com/
   baseURL: https://api.chartmetric.com/api
   tags:
-  - Tracks
+  - Album
   properties:
   - type: OpenAPI
-    url: openapi/chartmetric-tracks-api-openapi.yml
+    url: openapi/chartmetric-album-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-artist-api
+  name: Chartmetric Artist API
+  description: >-
+    Artists, the core entity in Chartmetric, identified by a Chartmetric artist ID. Endpoints cover metadata
+    and platform URLs, cross-platform ID lookup, fan metrics and cached stat trends, artist rank and Cross-Platform
+    Performance (CPP), catalog data (tracks, albums, chart appearances, playlists), audience demographics
+    for Instagram, TikTok and YouTube plus Spotify listener geography, discovery lists (A&R, similar,
+    related and neighboring artists), and career context such as milestones, news, live events, venues
+    and TV appearances.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Artist
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-artist-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-brand-api
+  name: Chartmetric Brand API
+  description: >-
+    Brands tracked for sponsorship and partnership research. Endpoints list brand names, filter brands
+    by interest category, and return the details of a single brand.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Brand
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-brand-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-city-api
+  name: Chartmetric City API
+  description: >-
+    Cities used for geographic breakdowns of audience and consumption data. Endpoints list the cities
+    of a country and return the top artists or tracks in a city for a given platform.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - City
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-city-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-country-api
+  name: Chartmetric Country API
+  description: >-
+    Country-level rankings. Endpoints return artist rankings for a country, broken down by area, ranking
+    type and sub-area.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Country
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-country-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-curator-api
+  name: Chartmetric Curator API
+  description: >-
+    Playlist curators — the editorial and user accounts that own playlists on Spotify, Apple Music, Amazon,
+    Deezer, YouTube and iTunes. Endpoints list curators per platform and return a curator's metadata,
+    social and streaming URLs, follower metrics over time, and playlists.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Curator
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-curator-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-event-api
+  name: Chartmetric Event API
+  description: Live events tied to a venue. Endpoints return the events scheduled at a given venue.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Event
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-event-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-festival-api
+  name: Chartmetric Festival API
+  description: Music festivals tracked by Chartmetric. Endpoints return the list of festivals.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Festival
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-festival-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-genre-api
+  name: Chartmetric Genre API
+  description: >-
+    Chartmetric's genre taxonomy, used to filter artists, tracks and charts. Endpoints list all genres
+    and return a single genre by ID.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Genre
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-genre-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-playlist-api
+  name: Chartmetric Playlist API
+  description: >-
+    Playlists across Spotify, Apple Music, Amazon, Deezer, YouTube, iTunes and SoundCloud. Endpoints list
+    playlists per platform and return playlist metadata, follower and position history, current or past
+    tracklists, a snapshot for a specific date, similar playlists, the last time the playlist was updated,
+    and the playlist journey of an artist, album or track.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Playlist
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-playlist-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-radio-api
+  name: Chartmetric Radio API
+  description: >-
+    Radio airplay data for artists and tracks. Endpoints return airplay time series, total airplay counts
+    overall, by entity and by broadcast market, and the radio station list for a country.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Radio
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-radio-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-sns-api
+  name: Chartmetric SNS API
+  description: >-
+    Deep social data for the social accounts linked to Chartmetric entities. Endpoints return post-level
+    performance, such as the top Instagram posts and reels of an artist.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - SNS
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-sns-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-token-api
+  name: Chartmetric Token API
+  description: >-
+    Authentication. Exchange your refresh token for a short-lived access token, which must be sent as
+    a bearer token on every other request.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Token
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-token-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-track-api
+  name: Chartmetric Track API
+  description: >-
+    Tracks (recordings), identified by a Chartmetric track ID or a platform ID such as an ISRC or Spotify
+    ID. Endpoints cover track metadata, cross-platform ID lookup, per-platform stats, chart appearances,
+    playlist placements and dated snapshots, playlist stream estimates (single and batch), related tracks,
+    milestones, filtered track lists, and TikTok video and YouTube Shorts performance.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Track
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-track-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.chartmetric.com/
+  - type: APIReference
+    url: https://api.chartmetric.com/apidoc/
+  - type: PostmanCollection
+    url: collections/chartmetric.postman_collection.json
+  - type: OpenCollection
+    url: collections/chartmetric.opencollection.json
+- aid: chartmetric:chartmetric-venue-api
+  name: Chartmetric Venue API
+  description: Venues used for live-event and touring data. Endpoints return the list of venues.
+  humanURL: https://apidocs.chartmetric.com/
+  baseURL: https://api.chartmetric.com/api
+  tags:
+  - Venue
+  properties:
+  - type: OpenAPI
+    url: openapi/chartmetric-venue-api-openapi.yml
   - type: Documentation
     url: https://apidocs.chartmetric.com/
   - type: APIReference

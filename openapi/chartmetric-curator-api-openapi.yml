@@ -1,0 +1,3025 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Curator API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Curator
+  description: Playlist curators — the editorial and user accounts that own playlists on Spotify, Apple Music, Amazon, Deezer, YouTube and iTunes. Endpoints list curators per platform and return a curator's metadata, social and streaming URLs, follower metrics over time, and playlists.
+paths:
+  /api/curator/deezer/lists:
+    get:
+      summary: List Deezer Curators
+      tags:
+      - Curator
+      operationId: listCuratorsDeezer
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default).'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - num_playlists
+          - total_reach
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: total_reach
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      - name: majorLabel
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: brand
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: popularIndie
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+        required: false
+        description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - position: 1
+                      total_reach: 25973829
+                      owner_id: 637006841
+                      url: https://api.deezer.com/user/637006841/image
+                      owner_name: Deezer Charts
+                      code2: gb
+                      num_playlists: 66
+                      tags:
+                      - '''Hip-Hop/Rap'''
+                      - '''Latin'''
+                      - '''Pop'''
+                    offset: 0
+                    total: 100
+  /api/curator/itunes/lists:
+    get:
+      summary: List iTunes Curators
+      tags:
+      - Curator
+      operationId: listCuratorsItunes
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default). Note: `itunes` and `applemusic` return the same data.'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - num_playlists
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: num_playlists
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+        required: false
+        description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - owner_id: 1
+                      owner_name: Apple Music
+                      url: https://is1-ssl.mzstatic.com/image/thumb/Features126/v4/...jpg
+                      code2: us
+                      curator_id: 976439548
+                      num_playlists: 2500
+                      tags:
+                      - Pop
+                      - Rock
+                    offset: 0
+                    total: 500
+  /api/curator/applemusic/lists:
+    get:
+      summary: List Apple Music Curators
+      tags:
+      - Curator
+      operationId: listCuratorsAppleMusic
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default). Note: `applemusic` and `itunes` return the same data.'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - num_playlists
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: num_playlists
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+        required: false
+        description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - owner_id: 1
+                      owner_name: Apple Music
+                      url: https://is1-ssl.mzstatic.com/image/thumb/Features126/v4/...jpg
+                      code2: us
+                      curator_id: 976439548
+                      num_playlists: 2500
+                      tags:
+                      - Pop
+                      - Rock
+                    offset: 0
+                    total: 500
+  /api/curator/spotify/lists:
+    get:
+      summary: List Spotify Curators
+      tags:
+      - Curator
+      operationId: listCuratorsSpotify
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default).'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - num_playlists
+          - followers
+          - num_updates
+          - num_tracks_updated
+          - fdiff_month
+          - fdiff_percent_month
+          - sp_playlist_total_reach
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: sp_playlist_total_reach
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: withSocialUrls
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only curators that have social URL data on file (URLs themselves are not included in the response). Applies to `spotify` only.
+          default: false
+        required: false
+        description: If true, return only curators that have social URL data on file (URLs themselves are not included in the response). Applies to `spotify` only.
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      - name: majorLabel
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: brand
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: popularIndie
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+        required: false
+        description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+      - name: audiobook
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only audiobook curators. If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only audiobook curators. If false, exclude them. Applies to `spotify` and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - position: 1
+                      user_id: spotify
+                      owner_id: 2
+                      owner_name: Spotify
+                      url: https://i.scdn.co/image/ab6775700000ee8555c25988a6ac314394d3fbf5
+                      num_playlists: 138039
+                      sp_playlist_total_reach: 2793372862
+                      followers: 11213310
+                      fdiff_month: 113368
+                      fdiff_percent_month: 0.013958
+                      tags:
+                      - pop
+                      - hip-hop/rap
+                      - rock
+                      num_updates: 0
+                      num_tracks_updated: 0
+                      editorial: true
+                      major_label: false
+                      brand: false
+                      popular_indie: false
+                      indie: false
+                      audiobook: true
+                    offset: 0
+                    total: 2712006
+  /api/curator/youtube/lists:
+    get:
+      summary: List YouTube Curators
+      tags:
+      - Curator
+      operationId: listCuratorsYoutube
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default).'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - channel_subscribers
+          - channel_views
+          - num_playlists
+          - total_playlist_views
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: channel_subscribers
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      - name: majorLabel
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only major-label curators (Sony, Universal, Warner). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: brand
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only curators associated with a brand. If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: popularIndie
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only popular indie curators (not editorial/brand/major-label, with 100K+ reached followers). If false, exclude them. Applies to `spotify` and `youtube`.
+      - name: indie
+        in: query
+        schema:
+          type: boolean
+          description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+        required: false
+        description: If true, include curators that are not major-label, editorial, brand, or popular indie. If false, exclude them. Applies to `spotify`, `applemusic`, and `youtube`.
+      - name: audiobook
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only audiobook curators. If false, exclude them. Applies to `spotify` and `youtube`.
+        required: false
+        description: If true, return only audiobook curators. If false, exclude them. Applies to `spotify` and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - position: 1
+                      owner_id: UC-9-kyTW8ZkZNDHQJ6FgpwQ
+                      url: https://yt3.googleusercontent.com/...
+                      owner_name: Music
+                      channel_views: 123456789
+                      channel_subscribers: 100000000
+                      total_playlist_views: 987654321
+                      num_playlists: 52
+                      tags:
+                      - pop
+                      - rock
+                    offset: 0
+                    total: 1000
+  /api/curator/amazon/lists:
+    get:
+      summary: List Amazon Curators
+      tags:
+      - Curator
+      operationId: listCuratorsAmazon
+      description: 'List curators by platform. Sort columns vary by platform: `spotify` — `num_playlists` (default), `followers`, `num_updates`, `num_tracks_updated`, `fdiff_month`, `fdiff_percent_month`, `sp_playlist_total_reach`; `applemusic`/`itunes` — `num_playlists` (default); `deezer` — `num_playlists`, `total_reach` (default); `youtube` — `total_playlist_views` (default), `num_playlists`, `channel_views`, `channel_subscribers`; `amazon` — `total_playlists` (default).'
+      parameters:
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate. `offset + limit` must be ≤ 10,000 (Elasticsearch window).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 0
+          description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+          default: 50
+        required: false
+        description: Maximum number of curators to return per request. Defaults to 50; max 10000. `offset + limit` must be ≤ 10,000.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - total_playlists
+          description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+          default: total_playlists
+        required: false
+        description: Column to sort curators by. Allowed values vary per platform; see the endpoint description for the list. Default also varies per platform.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Defaults to true.
+      - name: userListIds[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 2147483647
+          uniqueItems: true
+          description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+        required: false
+        description: Filter by Chartmetric shortlist (user list) IDs the curator is included on. Public API exposes this as `shortlistIds`.
+      - name: nameSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against curator name.
+        required: false
+        description: Substring match against curator name.
+      - name: playlistKeywordSearch
+        in: query
+        schema:
+          type: string
+          description: Substring match against names of playlists owned by the curator.
+        required: false
+        description: Substring match against names of playlists owned by the curator.
+      - name: editorial
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+        required: false
+        description: If true, return only official platform editorial curators. If false, exclude them. Applies to `spotify`, `applemusic`, `amazon`, and `youtube`.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        position:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 1-based rank of the curator within the entire sorted result set (i.e. `index + 1 + offset`).
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric curator ID. Numeric for `spotify`, `applemusic`, `itunes`, `deezer`, `amazon`; string for `youtube` (channel ID).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Curator display name.
+                        url:
+                          type:
+                          - string
+                          - 'null'
+                          description: Image or profile URL for the curator on the platform.
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase, e.g. 'us', 'gb'). Populated for `applemusic`, `itunes`, `deezer`, `youtube`.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - string
+                            - 'null'
+                          description: Genre tags associated with the curator.
+                        num_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Count of the curator's playlists tracked by Chartmetric.
+                        user_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side user ID (Spotify user).
+                        sp_playlist_total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this Spotify curator's playlists (total playlist reach). Spotify only.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Curator's follower count on the platform.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago. Spotify only.
+                        fdiff_percent_month:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Percentage change in followers vs. 28 days ago, expressed as a fraction (e.g. 0.0139 = +1.39%). Spotify only.
+                        num_updates:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of updates the curator has made across their playlists. Spotify only.
+                        num_tracks_updated:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of tracks added/removed across the curator's recent playlist updates. Spotify only.
+                        editorial:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if this is an official platform editorial curator.
+                        major_label:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a major label (Sony, Universal, Warner).
+                        brand:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is operated by a brand.
+                        popular_indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is a popular indie (not editorial/brand/major-label, with 100K+ reached followers).
+                        indie:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator is independent (not editorial, brand, major-label, or popular indie).
+                        audiobook:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the curator focuses on audiobook content.
+                        suspicion_score:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Chartmetric suspicion score flagging potentially inauthentic activity (lower is cleaner). Spotify only.
+                        total_reach:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of followers across all of this curator's Deezer playlists. Deezer only.
+                        total_playlists:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of playlists owned by this curator on Amazon Music. Amazon only.
+                        curator_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Platform-side curator ID on Apple Music / iTunes.
+                        channel_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Cumulative views across the curator's YouTube channel. YouTube only.
+                        channel_subscribers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Subscriber count for the curator's YouTube channel. YouTube only.
+                        total_playlist_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Sum of views across all of the curator's YouTube playlists. YouTube only.
+                    description: List of curator entries for the requested platform.
+                  offset:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Offset of this result page (echoes the `offset` request param).
+                  total:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of curators matching the filters across all pages.
+                required:
+                - obj
+              examples:
+                default:
+                  value:
+                    obj:
+                    - position: 1
+                      total_playlists: 1200
+                      owner_id: 42
+                      owner_name: Amazon Music
+                      tags:
+                      - Pop
+                      - Rock
+                    offset: 0
+                    total: 200
+  /api/curator/{platform}/{id}:
+    get:
+      summary: Get Curator Metadata
+      tags:
+      - Curator
+      operationId: getCuratorByPlatformId
+      description: 'Get a curator''s metadata (name, image, tags, cross-platform social stats) by `platform` and Chartmetric `id`. Supported platforms: `spotify`, `applemusic`, `deezer`, `amazon`, `youtube`.'
+      parameters:
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - cm
+          - spotify
+          - itunes
+          - applemusic
+          - deezer
+          - shazam
+          - beatport
+          - amazon
+          - youtube
+          - tunefind
+          - soundcloud
+          description: Streaming platform. Curator metadata is supported on `spotify`, `applemusic`, `deezer`, `amazon`, `youtube`.
+        required: true
+        description: Streaming platform. Curator metadata is supported on `spotify`, `applemusic`, `deezer`, `amazon`, `youtube`.
+        examples:
+          default:
+            value: cm
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric curator ID.
+        required: true
+        description: Chartmetric curator ID.
+        examples:
+          default:
+            value: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      id:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                        - type: string
+                        description: Chartmetric curator ID.
+                      user_id:
+                        anyOf:
+                        - type: string
+                        - type: integer
+                          minimum: 0
+                        nullable: true
+                        description: Platform-side user/channel ID (e.g. Spotify user, YouTube channel ID, Deezer user).
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Curator display name.
+                      description:
+                        type:
+                        - string
+                        - 'null'
+                        description: Free-form curator description (Apple Music only; null on other platforms).
+                      image_url:
+                        type:
+                        - string
+                        - 'null'
+                        description: URL of the curator's profile image.
+                      code2:
+                        type:
+                        - string
+                        - 'null'
+                        description: ISO 3166-1 alpha-2 country code associated with the curator (lowercase). Populated for Apple Music and Deezer.
+                      last_updated:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: ISO timestamp of the curator's most recent metadata refresh.
+                      tag_ids:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type:
+                          - integer
+                          - 'null'
+                        description: Chartmetric genre tag IDs for this curator (positionally aligned with `tag_names`).
+                      tag_names:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type:
+                          - string
+                          - 'null'
+                        description: Genre tag names for this curator (positionally aligned with `tag_ids`).
+                      groover_url:
+                        type:
+                        - string
+                        - 'null'
+                        description: Groover submission URL for this curator, when one is registered.
+                      cm_statistics:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          num_sp_playlists:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Number of Spotify playlists owned by this curator.
+                          sp_followers:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Curator's Spotify follower count.
+                          max_sp_playlist_followers:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Maximum follower count among the curator's Spotify playlists.
+                          sp_playlist_total_reach:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Sum of followers across all of the curator's Spotify playlists.
+                          num_itunes_playlists:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Number of Apple Music / iTunes playlists owned by this curator.
+                          num_de_playlists:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Number of Deezer playlists owned by this curator.
+                        description: Aggregated playlist statistics for this curator. Field set varies per platform.
+                      tags:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric genre tag ID.
+                            name:
+                              type: string
+                              description: Genre tag name.
+                          required:
+                          - id
+                          - name
+                        description: Genre tags as `{id, name}` objects.
+                      instagram_followers:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                        - type: string
+                        nullable: true
+                        description: Instagram follower count for the curator's linked account.
+                      soundcloud_followers:
+                        type:
+                        - integer
+                        - 'null'
+                        description: SoundCloud follower count for the curator's linked account.
+                      facebook_fans:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Facebook page fans (likes) for the curator's linked page.
+                      facebook_followers:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Facebook page followers for the curator's linked page.
+                      youtube_views:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                        - type: string
+                        nullable: true
+                        description: Cumulative view count across the curator's YouTube channel.
+                      youtube_subscribers:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Subscriber count for the curator's YouTube channel.
+                      twitter_followers:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Twitter/X follower count for the curator's linked account.
+                      twitter_retweets:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Cumulative retweet count for the curator's linked Twitter/X account.
+                      tiktok_likes:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                        - type: string
+                        nullable: true
+                        description: Cumulative like count across the curator's TikTok account.
+                      tiktok_followers:
+                        type:
+                        - integer
+                        - 'null'
+                        description: TikTok follower count for the curator's linked account.
+                      spotifySocialUrls:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties: {}
+                        description: Spotify-discovered social URLs for the curator (e.g. linked Instagram, Twitter). Spotify only.
+                      storefronts:
+                        type:
+                        - string
+                        - 'null'
+                        description: Comma-separated list of Apple Music storefront codes where this curator is available. Apple Music only.
+                      num_itunes_playlists:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Number of Apple Music / iTunes playlists owned by this curator. Apple Music only.
+                    required:
+                    - id
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      id: 2
+                      user_id: spotify
+                      name: Spotify
+                      image_url: https://i.scdn.co/image/ab6775700000ee8555c25988a6ac314394d3fbf5
+                      last_updated: '2021-05-06T07:00:00.000Z'
+                      cm_statistics:
+                        num_sp_playlists: 70967
+                        sp_followers: 9563979
+                        max_sp_playlist_followers: 27702406
+                        sp_playlist_total_reach: 2082364476
+                      tags:
+                      - id: 103
+                        name: folk
+                      - id: 112
+                        name: rock
+                      - id: 114
+                        name: classical
+                      instagram_followers: 6622570
+                      soundcloud_followers: null
+                      facebook_fans: 22691516
+                      facebook_followers: 22772732
+                      youtube_views: '552256171'
+                      youtube_subscribers: 1200000
+                      twitter_followers: 4181216
+                      twitter_retweets: 7110
+                      tiktok_likes: '834600'
+                      tiktok_followers: 199000
+  /api/curator/{platform}/{id}/playlists:
+    get:
+      summary: List Curator Playlists
+      tags:
+      - Curator
+      operationId: listCuratorPlaylists
+      description: 'Get playlists created by a curator. Sort columns by platform: `spotify` — `last_updated`, `followers` (default), `num_track`; `applemusic` — `last_updated` (default), `num_track`; `deezer` — `last_updated` (default), `followers`, `num_track`.'
+      parameters:
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - cm
+          - spotify
+          - itunes
+          - applemusic
+          - deezer
+          - shazam
+          - beatport
+          - amazon
+          - youtube
+          - tunefind
+          - soundcloud
+          description: Streaming platform. Curator playlists are supported on `spotify`, `applemusic`, `deezer`.
+        required: true
+        description: Streaming platform. Curator playlists are supported on `spotify`, `applemusic`, `deezer`.
+        examples:
+          default:
+            value: cm
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric curator ID.
+        required: true
+        description: Chartmetric curator ID.
+        examples:
+          default:
+            value: 1
+      - name: storefront
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+          default: us
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          description: Maximum number of items to return per request.
+          default: 100
+        required: false
+        description: Maximum number of items to return per request.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: sortColumn
+        in: query
+        schema:
+          anyOf:
+          - type: string
+            enum:
+            - last_updated
+            - followers
+            - num_track
+          - type: string
+            enum:
+            - last_updated
+            - num_track
+          - type: string
+            enum:
+            - last_updated
+            - num_track
+            - followers
+          description: Column to sort playlists by. Allowed values vary per platform — see the operation description for the per-platform list.
+        required: false
+        description: Column to sort playlists by. Allowed values vary per platform — see the operation description for the per-platform list.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true, sort `sortColumn` in descending order. Only allowed when `sortColumn` is set. Defaults to true.
+          default: true
+        required: false
+        description: If true, sort `sortColumn` in descending order. Only allowed when `sortColumn` is set. Defaults to true.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_length:
+                    anyOf:
+                    - type: integer
+                    - type: string
+                    nullable: true
+                    description: Total number of playlists matching the request across all pages.
+                  length:
+                    type: integer
+                    minimum: 0
+                    description: Number of playlists returned in this response page.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          description: Chartmetric playlist ID.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Playlist name.
+                        playlist_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Platform-side playlist ID (e.g. Spotify URI tail).
+                        description:
+                          type:
+                          - string
+                          - 'null'
+                          description: Free-form playlist description from the platform.
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of the playlist cover image.
+                        sys_last_updated:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: ISO timestamp of the most recent Chartmetric crawl of this playlist.
+                        last_updated:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: ISO timestamp of the most recent platform-side update to this playlist.
+                        personalized:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the playlist is personalized per listener (e.g. Discover Weekly).
+                        code2:
+                          type:
+                          - string
+                          - 'null'
+                          description: ISO 3166-1 alpha-2 country code associated with the playlist (lowercase).
+                        owner_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Display name of the playlist's owner.
+                        owner_id:
+                          anyOf:
+                          - type: integer
+                            minimum: 0
+                          - type: string
+                          nullable: true
+                          description: Chartmetric ID of the playlist owner.
+                        user_id:
+                          anyOf:
+                          - type: string
+                          - type: integer
+                            minimum: 0
+                          nullable: true
+                          description: Platform-side ID of the playlist owner.
+                        official:
+                          type:
+                          - boolean
+                          - 'null'
+                          description: True if the playlist is an official platform editorial playlist.
+                        tags:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 2147483647
+                                description: Chartmetric genre tag ID.
+                              name:
+                                type: string
+                                description: Genre tag name.
+                            required:
+                            - id
+                            - name
+                          description: Genre tags applied to the playlist.
+                        followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Playlist follower count on the platform.
+                        num_track:
+                          anyOf:
+                          - type: integer
+                          - type: string
+                          nullable: true
+                          description: Number of tracks currently on the playlist.
+                        fdiff_week:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 7 days ago.
+                        fdiff_month:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Net change in followers vs. 28 days ago.
+                        catalog:
+                          type:
+                          - string
+                          - 'null'
+                          description: Track-catalog mix of the playlist (e.g. 'frontline', 'catalogue', 'mixed').
+                        active_ratio:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Fraction of the playlist tracks that are currently active (0–1).
+                      required:
+                      - id
+                    description: List of playlists owned by the curator.
+                required:
+                - length
+                - data
+              examples:
+                default:
+                  value:
+                    total_length: '134'
+                    length: 1
+                    data:
+                    - id: 1667152
+                      name: Dominican Republic Viral 50
+                      playlist_id: 37i9dQZEVXbJWZV7aRNQck
+                      description: Your daily update of the most viral tracks in Dominican Republic.
+                      image_url: https://charts-images.scdn.co/assets/locale_en/viral/daily/region_do_large.jpg
+                      sys_last_updated: '2020-11-04T09:17:40.488Z'
+                      last_updated: '2020-11-04T09:17:39.956Z'
+                      personalized: false
+                      code2: do
+                      owner_name: spotifycharts
+                      owner_id: 133000
+                      user_id: spotifycharts
+                      official: true
+                      tags:
+                      - id: 4280
+                        name: latin
+                      followers: 23896
+                      num_track: '50'
+                      fdiff_week: 43
+                      fdiff_month: 322
+                      catalog: 'frontline '
+                      active_ratio: 0
+  /api/curator/{platform}/{id}/urls:
+    get:
+      summary: List Curator Social / Streaming URLs
+      tags:
+      - Curator
+      operationId: listCuratorSocialUrls
+      description: Get social media and streaming service URLs belonging to this curator. `url` is a string when a URL is known; the handler emits an empty array `[]` when SNS data has no URL for the domain.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric curator ID.
+        required: true
+        description: Chartmetric curator ID.
+        examples:
+          default:
+            value: 1
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - spotify
+          - applemusic
+          - deezer
+          description: Streaming platform. Social URLs are supported on `spotify`, `applemusic`, `deezer`.
+        required: true
+        description: Streaming platform. Social URLs are supported on `spotify`, `applemusic`, `deezer`.
+        examples:
+          default:
+            value: spotify
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        domain:
+                          type: string
+                          description: Social or streaming domain key (e.g. 'youtube', 'facebook', 'instagram', 'spotify', 'website').
+                        url:
+                          anyOf:
+                          - type: string
+                          - type: array
+                            items:
+                              type: string
+                          nullable: true
+                          description: URL string when known. The handler emits an empty array `[]` when the SNS record has no URL for this domain.
+                      required:
+                      - domain
+                    description: List of `{domain, url}` entries for the curator's known social and streaming presence.
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - domain: youtube
+                      url: https://www.youtube.com/channel/UC4sYm9wRMr4uUVln4DywKOg
+                    - domain: website
+                      url: https://filtr.com/
+                    - domain: soundcloud
+                      url: https://soundcloud.com/filtr
+                    - domain: facebook
+                      url: https://www.facebook.com/filtr/
+                    - domain: instagram
+                      url: https://www.instagram.com/filtr/
+                    - domain: tiktok
+                      url: https://www.tiktok.com/@filtr.music
+                    - domain: spotify
+                      url: https://open.spotify.com/user/myplay.com
+  /api/curator/{platform}/{id}/stat/{source}:
+    get:
+      summary: Get Curator Fan Metrics
+      tags:
+      - Curator
+      operationId: getCuratorFanMetrics
+      description: 'Time-series fan metrics for a curator from a given `source` (one of `spotify`, `facebook`, `twitter`, `youtube_channel`, `instagram`, `tiktok`). Pass `field` to request a single metric (e.g. `followers`, `likes`), or omit it for source defaults: spotify → `followers`; facebook → `followers`, `likes`, `talks`; twitter → `followers`; youtube_channel → `subscribers`, `views`, `videos`; instagram → `followers`; tiktok → `followers`, `likes`.'
+      parameters:
+      - name: platform
+        in: path
+        schema:
+          type: string
+          enum:
+          - spotify
+          - itunes
+          - applemusic
+          - deezer
+          description: 'Streaming platform of the curator. Allowed: `spotify`, `itunes`, `applemusic`, `deezer` (`itunes` and `applemusic` return the same data).'
+        required: true
+        description: 'Streaming platform of the curator. Allowed: `spotify`, `itunes`, `applemusic`, `deezer` (`itunes` and `applemusic` return the same data).'
+        examples:
+          default:
+            value: spotify
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric curator ID.
+        required: true
+        description: Chartmetric curator ID.
+        examples:
+          default:
+            value: 1
+      - name: source
+        in: path
+        schema:
+          type: string
+          enum:
+          - spotify
+          - facebook
+          - twitter
+          - youtube_channel
+          - instagram
+          - tiktok
+          description: Social/streaming source for the metric. One of `spotify`, `facebook`, `twitter`, `youtube_channel`, `instagram`, `tiktok`. Pair with `field` to request a single metric.
+        required: true
+        description: Social/streaming source for the metric. One of `spotify`, `facebook`, `twitter`, `youtube_channel`, `instagram`, `tiktok`. Pair with `field` to request a single metric.
+        examples:
+          default:
+            value: spotify
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Lower bound of the date range in ISO format (e.g. '2024-03-05'). Defaults to 20 days ago. Ignored when `latest=true`.
+          default: '2026-09-29'
+        required: false
+        description: Lower bound of the date range in ISO format (e.g. '2024-03-05'). Defaults to 20 days ago. Ignored when `latest=true`.
+      - name: until
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Upper bound of the date range in ISO format (e.g. '2024-03-25'). Defaults to today. Ignored when `latest=true`.
+          default: '2026-10-19'
+        required: false
+        description: Upper bound of the date range in ISO format (e.g. '2024-03-25'). Defaults to today. Ignored when `latest=true`.
+      - name: field
+        in: query
+        schema:
+          type: string
+          description: Specific stat to return from `source` (e.g. `followers`, `likes`). See the operation description for valid `(source, field)` combinations. If omitted, returns the source defaults.
+        required: false
+        description: Specific stat to return from `source` (e.g. `followers`, `likes`). See the operation description for valid `(source, field)` combinations. If omitted, returns the source defaults.
+      - name: latest
+        in: query
+        schema:
+          type: boolean
+          description: If true, return only the most recent data point and ignore `since`/`until`. Defaults to false.
+          default: false
+        required: false
+        description: If true, return only the most recent data point and ignore `since`/`until`. Defaults to false.
+      - name: interpolated
+        in: query
+        schema:
+          type: boolean
+          description: If true, linearly interpolate between adjacent known data points to fill missing days. Each returned point carries an `interpolated` boolean. Defaults to false.
+          default: false
+        required: false
+        description: If true, linearly interpolate between adjacent known data points to fill missing days. Each returned point carries an `interpolated` boolean. Defaults to false.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      link:
+                        type:
+                        - string
+                        - 'null'
+                        description: URL on `source` associated with the curator (e.g. the curator's Facebook page), when known.
+                      followers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of follower counts for this curator on `source`.
+                      likes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of cumulative like counts (Facebook, TikTok).
+                      talks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of "people talking about this" counts (Facebook).
+                      subscribers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of subscriber counts (YouTube).
+                      views:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of cumulative view counts (YouTube).
+                      videos:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Metric value at this data point.
+                            timestp:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              description: ISO timestamp at which this data point was recorded.
+                            flags:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if a post was made on `source` on this date (e.g. a Facebook post). Helpful for explaining spikes in nearby metrics.
+                            diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between this data point and the previous one in the array. Always null for the first point.
+                            weekly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 7 days ago.
+                            weekly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 7 days (e.g. `1.39` means +1.39%).
+                            monthly_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Difference between `value` today and 28 days ago.
+                            monthly_diff_percent:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Percentage change in `value` over the past 28 days (e.g. `1.39` means +1.39%).
+                            daily_diff:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Day-over-day difference in `value`. Populated only when `interpolated=true`; when `interpolated=false` the value is returned in `diff` instead. Not applicable for Spotify popularity.
+                            interpolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was interpolated from neighboring days rather than read from source. Only present when `interpolated=true` was requested.
+                            extrapolated:
+                              type:
+                              - boolean
+                              - 'null'
+                              description: True if this data point was extrapolated beyond the available source range.
+                        description: Time series of cumulative video counts (YouTube).
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      followers:
+                      - weekly_diff: null
+                        weekly_diff_percent: null
+                        monthly_diff: null
+                        monthly_diff_percent: null
+                        value: 462391
+                        timestp: '2022-02-06T00:00:00.000Z'
+                        flags: false
+                        diff: null
+                      - weekly_diff: null
+                        weekly_diff_percent: null
+                        monthly_diff: null
+                        monthly_diff_percent: null
+                        value: 464773
+                        timestp: '2022-02-16T00:00:00.000Z'
+                        flags: false
+                        diff: 2382
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

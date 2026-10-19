@@ -1,32 +1,34 @@
 {
   "provider": "chartmetric",
   "sources": [
-    "_original/chartmetric-openapi.yml"
+    "_original/chartmetric-openapi.json"
   ],
   "outputs": [
-    "chartmetric-albums-api-openapi.yml",
-    "chartmetric-artists-api-openapi.yml",
-    "chartmetric-authentication-api-openapi.yml",
+    "chartmetric-album-api-openapi.yml",
+    "chartmetric-artist-api-openapi.yml",
+    "chartmetric-brand-api-openapi.yml",
     "chartmetric-charts-api-openapi.yml",
-    "chartmetric-playlists-api-openapi.yml",
+    "chartmetric-city-api-openapi.yml",
+    "chartmetric-country-api-openapi.yml",
+    "chartmetric-curator-api-openapi.yml",
+    "chartmetric-event-api-openapi.yml",
+    "chartmetric-festival-api-openapi.yml",
+    "chartmetric-genre-api-openapi.yml",
+    "chartmetric-playlist-api-openapi.yml",
+    "chartmetric-radio-api-openapi.yml",
+    "chartmetric-sns-api-openapi.yml",
     "chartmetric-search-api-openapi.yml",
-    "chartmetric-tracks-api-openapi.yml"
+    "chartmetric-token-api-openapi.yml",
+    "chartmetric-track-api-openapi.yml",
+    "chartmetric-venue-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "chartmetric-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "chartmetric-openapi.json: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+15 apis, 17 total)"
   ],
-  "skipped": [
-    "chartmetric-albums-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-artists-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-charts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-playlists-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chartmetric-tracks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

@@ -1,0 +1,274 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Event API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Event
+  description: Live events tied to a venue. Endpoints return the events scheduled at a given venue.
+paths:
+  /api/event/venue/{id}:
+    get:
+      summary: List Events for a Venue
+      tags:
+      - Event
+      operationId: listEventsByVenue
+      description: 'List events taking place at a venue, with basic venue information and per-event artist lineups. Note: `venueInfo` is returned as an array of venue records, not a single object.'
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: string
+          description: Chartmetric venue ID.
+          title: venue ID
+        required: true
+        description: Chartmetric venue ID.
+        examples:
+          default:
+            value: '2762'
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of events to return. Defaults to 20, max 100.
+          default: 20
+        required: false
+        description: Maximum number of events to return. Defaults to 20, max 100.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      venueInfo:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            doc_id:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Chartmetric venue ID.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Venue name.
+                            lat:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Venue latitude in decimal degrees (WGS84).
+                            lng:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Venue longitude in decimal degrees (WGS84).
+                            cm_location:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Chartmetric location ID linking the venue to a city/region.
+                            code2:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country of the venue (ISO 3166-1 alpha-2 code).
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Venue image URL.
+                            city_id:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Chartmetric city ID where the venue is located.
+                            capacity:
+                              type:
+                              - integer
+                              - 'null'
+                              description: Approximate audience capacity of the venue.
+                            city_name:
+                              type:
+                              - string
+                              - 'null'
+                              description: City name where the venue is located.
+                            venue_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Venue's official website URL.
+                        description: Venue records (returned as an array even for a single venue).
+                      events:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            event_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric event ID.
+                            event_name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Event name.
+                            event_image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Event image URL.
+                            start_date:
+                              anyOf:
+                              - type: string
+                                format: date-time
+                              nullable: true
+                              description: Event start date in ISO 8601 format.
+                            end_date:
+                              anyOf:
+                              - type: string
+                              - type: string
+                                format: date-time
+                              nullable: true
+                              description: Currently always an empty string due to a latent reducer bug.
+                            artists:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type:
+                                    - integer
+                                    - 'null'
+                                    description: Chartmetric artist ID.
+                                  name:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    description: Artist name.
+                                  is_headliner:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                    description: True if the artist headlined the event, false if they performed but did not headline, null if headliner status is unknown.
+                              description: Artists performing at the event.
+                          required:
+                          - event_id
+                          - artists
+                        description: Events at the venue, ordered by `start_date` (newest first) and paginated by `limit`/`offset`.
+                    required:
+                    - venueInfo
+                    - events
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      venueInfo:
+                      - doc_id: 1
+                        name: Greek Theatre
+                        lat: 37.8726
+                        lng: -122.254
+                        cm_location: null
+                        code2: US
+                        image_url: https://www.jambase.com/wp-content/uploads/2015/06/greek-1480x832.jpg
+                        city_id: 6312
+                        capacity: 8500
+                        city_name: Berkeley
+                        venue_url: https://thegreekberkeley.com/
+                      events:
+                      - event_id: 8553348
+                        event_name: Modest Mouse at Greek Theatre
+                        event_image_url: https://www.jambase.com/wp-content/uploads/2019/03/modest-mouse-2019-press-1480x832.jpg
+                        start_date: '2016-07-28T00:00:00.000Z'
+                        end_date: ''
+                        artists:
+                        - id: 20
+                          name: Modest Mouse
+                          is_headliner: null
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

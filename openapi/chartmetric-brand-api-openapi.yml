@@ -1,0 +1,1443 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Brand API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Brand
+  description: Brands tracked for sponsorship and partnership research. Endpoints list brand names, filter brands by interest category, and return the details of a single brand.
+paths:
+  /api/brand/list:
+    get:
+      summary: List Brand Names (deprecated)
+      tags:
+      - Brand
+      operationId: listBrandNames
+      description: '**Deprecated — removed after 2026-10-01. Use `GET /api/brand/v2/list` instead.** List all Chartmetric brand IDs and names. Note that V2 reads a different brand universe, so IDs are not interchangeable.'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric brand ID.
+                        name:
+                          type: string
+                          description: Brand name.
+                      required:
+                      - id
+                      - name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 2
+                      name: 20th Century Fox
+                    - id: 10787
+                      name: 24Classics
+  /api/brand/list/by/interest:
+    get:
+      summary: List Brands by Interest Category (deprecated)
+      tags:
+      - Brand
+      operationId: listBrandsByInterest
+      description: '**Deprecated — removed after 2026-10-01. Use `GET /api/brand/v2/list/by/category` instead.** Brands grouped by interest category. The response is keyed by interest name (e.g. `Music`, `Electronics & Computers`) with up to 20 brands per category. Note: `sortColumn` is accepted for API compatibility but the handler currently returns a fixed ordering.'
+      parameters:
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - followers
+          - likers
+          description: Column used to order interest groups. One of `followers`, `likers`. Defaults to `followers`.
+          default: followers
+        required: false
+        description: Column used to order interest groups. One of `followers`, `likers`. Defaults to `followers`.
+      - name: brandCount
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          description: Maximum number of brands returned per interest category. Defaults to 10, max 50.
+          default: 10
+        required: false
+        description: Maximum number of brands returned per interest category. Defaults to 10, max 50.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties: {}
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          brand_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 2147483647
+                            description: Chartmetric brand ID.
+                          brand_name:
+                            type:
+                            - string
+                            - 'null'
+                            description: Brand name.
+                          interest_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 2147483647
+                            description: Chartmetric interest category ID.
+                          interest_name:
+                            type:
+                            - string
+                            - 'null'
+                            description: Interest category name (e.g. `Music`, `Electronics & Computers`).
+                          followers:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Sum of Instagram followers across artists whose audience is interested in this brand.
+                          artist_count:
+                            type:
+                            - integer
+                            - 'null'
+                            minimum: 0
+                            description: Number of artists with at least one Instagram follower interested in this brand.
+                        required:
+                        - brand_id
+                        - interest_id
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      Electronics & Computers:
+                      - brand_id: 138
+                        brand_name: Apple
+                        interest_id: 25
+                        interest_name: Electronics & Computers
+                        followers: 3305301635
+                        artist_count: 141435
+                      Music: []
+  /api/brand/v2/list:
+    get:
+      summary: List Brand Names (V2)
+      tags:
+      - Brand
+      operationId: listBrandNamesV2
+      description: Every Chartmetric brand ID and name. Replaces `GET /api/brand/list`, which reads a different brand universe — IDs are not interchangeable between the two.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric brand ID.
+                        name:
+                          type: string
+                          description: Brand name.
+                      required:
+                      - id
+                      - name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 138
+                      name: Apple
+                    - id: 2
+                      name: 20th Century Fox
+  /api/brand/v2/list/by/category:
+    get:
+      summary: List Brands by Category (V2)
+      tags:
+      - Brand
+      operationId: listBrandsByCategory
+      description: 'Brands filtered by category, with the brand’s own follower counts on each supported platform.
+
+
+        Replaces `GET /api/brand/list/by/interest`. Three differences worth noting when migrating:
+
+
+        | V1 | V2 |
+
+        |---|---|
+
+        | Response is a map keyed by category name | Response is a flat `data` array with `total` and `facets` |
+
+        | Fixed 20 brands per category, `brandCount` ignored | `limit` / `offset` honored |
+
+        | `followers` = summed Instagram followers of *artists* interested in the brand | `instagram_followers` / `tiktok_followers` = the *brand’s own* account followers |
+
+
+        The `interest_id` field has no V2 equivalent: categories are derived tags rather than rows with IDs. Use the category name, which `facets.categories` enumerates.'
+      parameters:
+      - name: category
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          description: Restrict results to a single brand category (e.g. `Music`, `Electronics & Computers`). Omit to search across every category. The `facets.categories` block of the response lists every value accepted here.
+        required: false
+        description: Restrict results to a single brand category (e.g. `Music`, `Electronics & Computers`). Omit to search across every category. The `facets.categories` block of the response lists every value accepted here.
+      - name: search
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          description: Free-text search over brand names. Omit to search across every brand.
+        required: false
+        description: Free-text search over brand names. Omit to search across every brand.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - name
+          - artistCount
+          - instagramFollowers
+          - tiktokFollowers
+          description: Column used to sort brands. One of `name`, `artistCount`, `instagramFollowers`, `tiktokFollowers`. Defaults to `instagramFollowers`.
+          default: instagramFollowers
+        required: false
+        description: Column used to sort brands. One of `name`, `artistCount`, `instagramFollowers`, `tiktokFollowers`. Defaults to `instagramFollowers`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true (default), sort `sortColumn` in descending order.
+          default: true
+        required: false
+        description: If true (default), sort `sortColumn` in descending order.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of brands to return. Defaults to 20, max 100.
+          default: 20
+        required: false
+        description: Maximum number of brands to return. Defaults to 20, max 100.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: countries[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 2
+            description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+          description: Restrict results to brands based in these countries, as ISO 3166-1 alpha-2 codes (e.g. 'US', 'BR').
+        required: false
+        description: Restrict results to brands based in these countries, as ISO 3166-1 alpha-2 codes (e.g. 'US', 'BR').
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric brand ID.
+                            name:
+                              type: string
+                              description: Brand name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Brand logo or profile image URL.
+                            category:
+                              type:
+                              - string
+                              - 'null'
+                              description: Primary brand category (e.g. `Music`, `Electronics & Computers`).
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country the brand is based in, as an ISO 3166-1 alpha-2 code (e.g. 'US').
+                            description:
+                              type:
+                              - string
+                              - 'null'
+                              description: Short brand description.
+                            instagram_followers:
+                              type: integer
+                              minimum: 0
+                              description: Followers on the brand's own Instagram account. 0 when unavailable.
+                            tiktok_followers:
+                              type: integer
+                              minimum: 0
+                              description: Followers on the brand's own TikTok account. 0 when unavailable.
+                            youtube_followers:
+                              type: integer
+                              minimum: 0
+                              description: Subscribers on the brand's own YouTube channel. 0 when unavailable.
+                            social_links:
+                              type: object
+                              properties:
+                                instagram:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's Instagram account.
+                                tiktok:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's TikTok account.
+                                youtube:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's YouTube channel.
+                              description: Links to the brand's own social accounts. Each entry is null when no account is linked on that platform.
+                            artist_count:
+                              type: integer
+                              minimum: 0
+                              description: Number of artists whose audience matches this brand.
+                          required:
+                          - id
+                          - name
+                          - instagram_followers
+                          - tiktok_followers
+                          - youtube_followers
+                          - social_links
+                          - artist_count
+                        description: Brands matching the filters, sorted and paginated as requested.
+                      total:
+                        type: integer
+                        minimum: 0
+                        description: Total number of brands matching the filters, ignoring `limit` / `offset`.
+                      facets:
+                        type: object
+                        properties:
+                          categories:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Facet value, usable as a filter parameter.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands carrying this value.
+                              required:
+                              - name
+                              - count
+                            description: Every category present in the unfiltered result set, with brand counts.
+                          subcategories:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Facet value, usable as a filter parameter.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands carrying this value.
+                              required:
+                              - name
+                              - count
+                            description: Every sub-category present in the unfiltered result set, with brand counts.
+                          countries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 2
+                                  description: ISO 3166-1 alpha-2 country code.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands based in this country.
+                              required:
+                              - code
+                              - count
+                            description: Every brand country present in the unfiltered result set, with brand counts.
+                        required:
+                        - categories
+                        - subcategories
+                        - countries
+                        description: Valid values for the filter parameters, with per-value brand counts.
+                    required:
+                    - data
+                    - total
+                    - facets
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      data:
+                      - id: 138
+                        name: Apple
+                        image_url: https://storage.googleapis.com/cm-brand-images/138.jpg
+                        category: Electronics & Computers
+                        country: US
+                        description: Consumer electronics and software company.
+                        instagram_followers: 33500000
+                        tiktok_followers: 2100000
+                        youtube_followers: 19800000
+                        social_links:
+                          instagram: https://www.instagram.com/apple
+                          tiktok: https://www.tiktok.com/@apple
+                          youtube: https://www.youtube.com/@Apple
+                        artist_count: 141435
+                      total: 1
+                      facets:
+                        categories:
+                        - name: Electronics & Computers
+                          count: 412
+                        subcategories:
+                        - name: Smartphones
+                          count: 37
+                        countries:
+                        - code: US
+                          count: 288
+  /api/brand/v2/list/by/subcategory:
+    get:
+      summary: List Brands by Sub-Category (V2)
+      tags:
+      - Brand
+      operationId: listBrandsBySubcategory
+      description: Brands filtered by sub-category. Identical to List Brands by Category except that the `subcategory` parameter filters on the brand’s finer-grained tags; `facets.subcategories` enumerates the accepted values. New in V2 — there is no V1 equivalent.
+      parameters:
+      - name: subcategory
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          description: Restrict results to a single brand sub-category. Omit to search across every sub-category. The `facets.subcategories` block of the response lists every value accepted here.
+        required: false
+        description: Restrict results to a single brand sub-category. Omit to search across every sub-category. The `facets.subcategories` block of the response lists every value accepted here.
+      - name: search
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          description: Free-text search over brand names. Omit to search across every brand.
+        required: false
+        description: Free-text search over brand names. Omit to search across every brand.
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - name
+          - artistCount
+          - instagramFollowers
+          - tiktokFollowers
+          description: Column used to sort brands. One of `name`, `artistCount`, `instagramFollowers`, `tiktokFollowers`. Defaults to `instagramFollowers`.
+          default: instagramFollowers
+        required: false
+        description: Column used to sort brands. One of `name`, `artistCount`, `instagramFollowers`, `tiktokFollowers`. Defaults to `instagramFollowers`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true (default), sort `sortColumn` in descending order.
+          default: true
+        required: false
+        description: If true (default), sort `sortColumn` in descending order.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of brands to return. Defaults to 20, max 100.
+          default: 20
+        required: false
+        description: Maximum number of brands to return. Defaults to 20, max 100.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: countries[]
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 2
+            description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+          description: Restrict results to brands based in these countries, as ISO 3166-1 alpha-2 codes (e.g. 'US', 'BR').
+        required: false
+        description: Restrict results to brands based in these countries, as ISO 3166-1 alpha-2 codes (e.g. 'US', 'BR').
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric brand ID.
+                            name:
+                              type: string
+                              description: Brand name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Brand logo or profile image URL.
+                            category:
+                              type:
+                              - string
+                              - 'null'
+                              description: Primary brand category (e.g. `Music`, `Electronics & Computers`).
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country the brand is based in, as an ISO 3166-1 alpha-2 code (e.g. 'US').
+                            description:
+                              type:
+                              - string
+                              - 'null'
+                              description: Short brand description.
+                            instagram_followers:
+                              type: integer
+                              minimum: 0
+                              description: Followers on the brand's own Instagram account. 0 when unavailable.
+                            tiktok_followers:
+                              type: integer
+                              minimum: 0
+                              description: Followers on the brand's own TikTok account. 0 when unavailable.
+                            youtube_followers:
+                              type: integer
+                              minimum: 0
+                              description: Subscribers on the brand's own YouTube channel. 0 when unavailable.
+                            social_links:
+                              type: object
+                              properties:
+                                instagram:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's Instagram account.
+                                tiktok:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's TikTok account.
+                                youtube:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: URL of the brand's YouTube channel.
+                              description: Links to the brand's own social accounts. Each entry is null when no account is linked on that platform.
+                            artist_count:
+                              type: integer
+                              minimum: 0
+                              description: Number of artists whose audience matches this brand.
+                          required:
+                          - id
+                          - name
+                          - instagram_followers
+                          - tiktok_followers
+                          - youtube_followers
+                          - social_links
+                          - artist_count
+                        description: Brands matching the filters, sorted and paginated as requested.
+                      total:
+                        type: integer
+                        minimum: 0
+                        description: Total number of brands matching the filters, ignoring `limit` / `offset`.
+                      facets:
+                        type: object
+                        properties:
+                          categories:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Facet value, usable as a filter parameter.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands carrying this value.
+                              required:
+                              - name
+                              - count
+                            description: Every category present in the unfiltered result set, with brand counts.
+                          subcategories:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Facet value, usable as a filter parameter.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands carrying this value.
+                              required:
+                              - name
+                              - count
+                            description: Every sub-category present in the unfiltered result set, with brand counts.
+                          countries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 2
+                                  description: ISO 3166-1 alpha-2 country code.
+                                count:
+                                  type: integer
+                                  minimum: 0
+                                  description: Number of brands based in this country.
+                              required:
+                              - code
+                              - count
+                            description: Every brand country present in the unfiltered result set, with brand counts.
+                        required:
+                        - categories
+                        - subcategories
+                        - countries
+                        description: Valid values for the filter parameters, with per-value brand counts.
+                    required:
+                    - data
+                    - total
+                    - facets
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      data:
+                      - id: 138
+                        name: Apple
+                        image_url: https://storage.googleapis.com/cm-brand-images/138.jpg
+                        category: Electronics & Computers
+                        country: US
+                        description: Consumer electronics and software company.
+                        instagram_followers: 33500000
+                        tiktok_followers: 2100000
+                        youtube_followers: 19800000
+                        social_links:
+                          instagram: https://www.instagram.com/apple
+                          tiktok: https://www.tiktok.com/@apple
+                          youtube: https://www.youtube.com/@Apple
+                        artist_count: 141435
+                      total: 1
+                      facets:
+                        categories:
+                        - name: Electronics & Computers
+                          count: 412
+                        subcategories:
+                        - name: Smartphones
+                          count: 37
+                        countries:
+                        - code: US
+                          count: 288
+  /api/brand/v2/{brandId}/audience:
+    get:
+      summary: 💎 Premium — Brand Audience
+      tags:
+      - Brand
+      operationId: getBrandAudienceV2
+      description: 'The brand''s own audience breakdown on a given platform — gender and age split, plus the countries, languages and ethnicities its followers skew toward.
+
+
+        Sourced from the brand''s own account rather than from the artists matched to it. Mirrors the artist audience endpoints; the brand profile at `GET /api/brand/v2/{brandId}` does not carry this data.
+
+
+        Every weight is a `0`-`1` fraction. `top_ethnicities` is Instagram-only and comes back empty when `platform` is `tiktok` or `youtube`. When no report exists for the brand on the requested platform, `source_platform` is `null` and the lists are empty.'
+      parameters:
+      - name: brandId
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric brand ID.
+        required: true
+        description: Chartmetric brand ID.
+        examples:
+          default:
+            value: 1
+      - name: platform
+        in: query
+        schema:
+          type: string
+          enum:
+          - instagram
+          - tiktok
+          - youtube
+          description: Platform the audience breakdown is sourced from. One of `instagram`, `tiktok`, `youtube`. Defaults to `instagram`. Ethnicity data exists on Instagram only, so `top_ethnicities` is empty for the other platforms.
+          default: instagram
+        required: false
+        description: Platform the audience breakdown is sourced from. One of `instagram`, `tiktok`, `youtube`. Defaults to `instagram`. Ethnicity data exists on Instagram only, so `top_ethnicities` is empty for the other platforms.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      source_platform:
+                        type:
+                        - string
+                        - 'null'
+                        description: Platform the breakdown was sourced from. Null when no report was available.
+                      demographics:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          male_percent:
+                            type:
+                            - number
+                            - 'null'
+                            format: float
+                            description: Share of the audience that is male, 0-1.
+                          female_percent:
+                            type:
+                            - number
+                            - 'null'
+                            format: float
+                            description: Share of the audience that is female, 0-1.
+                          age_groups:
+                            type: object
+                            properties: {}
+                            additionalProperties:
+                              type: number
+                              format: float
+                            description: Share of the audience per age bracket, keyed by bracket, 0-1.
+                        description: Age and gender split. Null when unavailable.
+                      top_countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type:
+                              - string
+                              - 'null'
+                              description: Code identifying the country.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Display name of the country.
+                            weight:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Share of the audience, as a 0-1 fraction.
+                        description: Countries the audience is concentrated in, strongest first.
+                      top_languages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type:
+                              - string
+                              - 'null'
+                              description: Code identifying the language.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Display name of the language.
+                            weight:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Share of the audience, as a 0-1 fraction.
+                        description: Languages the audience speaks, strongest first.
+                      top_ethnicities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type:
+                              - string
+                              - 'null'
+                              description: Code identifying the ethnicity.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Display name of the ethnicity.
+                            weight:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Share of the audience, as a 0-1 fraction.
+                        description: Ethnicity breakdown of the audience. Instagram-only; empty otherwise.
+                    required:
+                    - top_countries
+                    - top_languages
+                    - top_ethnicities
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      source_platform: instagram
+                      demographics:
+                        male_percent: 0.634776
+                        female_percent: 0.365224
+                        age_groups:
+                          13-17: 0.046817
+                          18-24: 0.309867
+                          25-34: 0.418992
+                          35-44: 0.160466
+                          45-64: 0.063359
+                          65+: 0.000498
+                      top_countries:
+                      - code: US
+                        name: United States
+                        weight: 0.733002
+                      - code: MX
+                        name: Mexico
+                        weight: 0.032383
+                      top_languages:
+                      - code: en
+                        name: English
+                        weight: 0.738099
+                      top_ethnicities:
+                      - code: white
+                        name: White
+                        weight: 0.51
+  /api/brand/v2/{brandId}:
+    get:
+      summary: Get Brand Info (V2)
+      tags:
+      - Brand
+      operationId: getBrandInfoV2
+      description: 'Brand profile — identity, categorisation, per-platform follower counts, social handles — plus the artists whose audience best matches the brand.
+
+
+        Replaces `GET /api/brand/{brandId}`. The two do not share a brand universe, so a `brandId` from V1 is not valid here.
+
+
+        | V1 | V2 |
+
+        |---|---|
+
+        | Artist list only (`brandName`, `total`, `artists`) | Full brand profile plus the artist list |
+
+        | Instagram followers only | `instagram_followers`, `tiktok_followers`, `youtube_followers` |
+
+        | `affinity`, a ratio around 1.0 | `audience_similarity`, a 0-100 Affinity score |
+
+        | `overlap`, `overlap_percent`, `instagram_likers.*` | no equivalent — the affinity model was rebuilt |
+
+
+        Returns `null` in `obj` when the brand ID is unknown.'
+      parameters:
+      - name: brandId
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric brand ID.
+        required: true
+        description: Chartmetric brand ID.
+        examples:
+          default:
+            value: 1
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - followers
+          - name
+          - audienceSimilarity
+          description: Column used to sort the artist list. One of `followers`, `name`, `audienceSimilarity`. Defaults to `followers`.
+          default: followers
+        required: false
+        description: Column used to sort the artist list. One of `followers`, `name`, `audienceSimilarity`. Defaults to `followers`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true (default), sort `sortColumn` in descending order.
+          default: true
+        required: false
+        description: If true (default), sort `sortColumn` in descending order.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of artists to return. Defaults to 10, max 100.
+          default: 10
+        required: false
+        description: Maximum number of artists to return. Defaults to 10, max 100.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      - name: platform
+        in: query
+        schema:
+          type: string
+          enum:
+          - instagram
+          - tiktok
+          - youtube
+          description: Platform each artist's `followers` count is reported on, which also determines the `followers` sort order. One of `instagram`, `tiktok`, `youtube`. Defaults to `instagram`. Does not affect `audience_similarity`, which always reflects the strongest platform pair.
+          default: instagram
+        required: false
+        description: Platform each artist's `followers` count is reported on, which also determines the `followers` sort order. One of `instagram`, `tiktok`, `youtube`. Defaults to `instagram`. Does not affect `audience_similarity`, which always reflects the strongest platform pair.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type:
+                    - object
+                    - 'null'
+                    properties:
+                      id:
+                        type: integer
+                        minimum: 0
+                        maximum: 2147483647
+                        description: Chartmetric brand ID.
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                        description: Brand name.
+                      image_url:
+                        type:
+                        - string
+                        - 'null'
+                        description: Brand logo or profile image URL.
+                      country:
+                        type:
+                        - string
+                        - 'null'
+                        description: Country the brand is based in, as an ISO 3166-1 alpha-2 code (e.g. 'US').
+                      category:
+                        type:
+                        - string
+                        - 'null'
+                        description: Primary brand category (e.g. `Music`, `Electronics & Computers`).
+                      sub_categories:
+                        type: array
+                        items:
+                          type: string
+                        description: Finer-grained brand tags. Empty when none are assigned.
+                      description:
+                        type:
+                        - string
+                        - 'null'
+                        description: Short brand description.
+                      instagram_followers:
+                        type: integer
+                        minimum: 0
+                        description: Followers on the brand's own Instagram account. 0 when unavailable.
+                      tiktok_followers:
+                        type: integer
+                        minimum: 0
+                        description: Followers on the brand's own TikTok account. 0 when unavailable.
+                      youtube_followers:
+                        type: integer
+                        minimum: 0
+                        description: Subscribers on the brand's own YouTube channel. 0 when unavailable.
+                      social_links:
+                        type: object
+                        properties:
+                          instagram:
+                            type:
+                            - string
+                            - 'null'
+                            description: URL of the brand's Instagram account.
+                          tiktok:
+                            type:
+                            - string
+                            - 'null'
+                            description: URL of the brand's TikTok account.
+                          youtube:
+                            type:
+                            - string
+                            - 'null'
+                            description: URL of the brand's YouTube channel.
+                        description: Links to the brand's own social accounts. Each entry is null when no account is linked on that platform.
+                      artist_count:
+                        type: integer
+                        minimum: 0
+                        description: Total number of artists matched to this brand, ignoring `limit` / `offset`.
+                      artists:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric artist ID.
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist name.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist image URL.
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist's home country as an ISO 3166-1 alpha-2 code (e.g. 'US').
+                            followers:
+                              type: integer
+                              minimum: 0
+                              description: Artist's followers on `platform`.
+                            genres:
+                              type: array
+                              items:
+                                type: string
+                              description: Genre names for the artist.
+                            audience_similarity:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Affinity between the artist and the brand, 0-100, higher is a stronger match. Always computed from the strongest platform pair, so it does not change with `platform`. Replaces V1 `affinity`, which was a ratio around 1.0 — the scales are not comparable.
+                            brand_platform:
+                              type:
+                              - string
+                              - 'null'
+                              description: Brand-side platform of the pair that produced `audience_similarity`.
+                            best_artist_platform:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist-side platform of the pair that produced `audience_similarity`.
+                          required:
+                          - id
+                          - followers
+                          - genres
+                        description: Matched artists, sorted and paginated as requested.
+                    required:
+                    - id
+                    - sub_categories
+                    - instagram_followers
+                    - tiktok_followers
+                    - youtube_followers
+                    - social_links
+                    - artist_count
+                    - artists
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      id: 138
+                      name: Apple
+                      image_url: https://storage.googleapis.com/cm-brand-images/138.jpg
+                      country: US
+                      category: Electronics & Computers
+                      sub_categories:
+                      - Smartphones
+                      - Computers
+                      description: Consumer electronics and software company.
+                      instagram_followers: 33500000
+                      tiktok_followers: 2100000
+                      youtube_followers: 19800000
+                      social_links:
+                        instagram: https://www.instagram.com/apple
+                        tiktok: https://www.tiktok.com/@apple
+                        youtube: https://www.youtube.com/@Apple
+                      artist_count: 98864
+                      artists:
+                      - id: 74419
+                        name: XXXTENTACION
+                        image_url: https://rovimusic.rovicorp.com/image.jpg
+                        country: US
+                        followers: 20578742
+                        genres:
+                        - Hip-Hop/Rap
+                        - Pop
+                        audience_similarity: 87.4
+                        brand_platform: instagram
+                        best_artist_platform: instagram
+  /api/brand/{brandId}:
+    get:
+      summary: Get Brand Info (deprecated)
+      tags:
+      - Brand
+      operationId: getBrandInfo
+      description: '**Deprecated — removed after 2026-10-01. Use `GET /api/brand/v2/{brandId}` instead.** Artists whose audience is interested in a brand, with Instagram follower/liker overlap and affinity. Sortable by any of `followers`, `likers`, `follower_overlap`, `liker_overlap`, `follower_affinity`, `liker_affinity`.'
+      parameters:
+      - name: brandId
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric brand ID.
+        required: true
+        description: Chartmetric brand ID.
+        examples:
+          default:
+            value: 1
+      - name: sortColumn
+        in: query
+        schema:
+          type: string
+          enum:
+          - followers
+          - likers
+          - follower_overlap
+          - liker_overlap
+          - follower_affinity
+          - liker_affinity
+          description: Column used to sort artists. One of `followers`, `likers`, `follower_overlap`, `liker_overlap`, `follower_affinity`, `liker_affinity`. Defaults to `followers`.
+          default: followers
+        required: false
+        description: Column used to sort artists. One of `followers`, `likers`, `follower_overlap`, `liker_overlap`, `follower_affinity`, `liker_affinity`. Defaults to `followers`.
+      - name: sortOrderDesc
+        in: query
+        schema:
+          type: boolean
+          description: If true (default), sort `sortColumn` in descending order.
+          default: true
+        required: false
+        description: If true (default), sort `sortColumn` in descending order.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          description: Maximum number of artists to return. Defaults to 10, max 50.
+          default: 10
+        required: false
+        description: Maximum number of artists to return. Defaults to 10, max 50.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+        required: false
+        description: Number of items to skip from the start of the result set; pair with `limit` to paginate.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      brandName:
+                        type:
+                        - string
+                        - 'null'
+                        description: Brand name.
+                      total:
+                        type: integer
+                        minimum: 0
+                        description: Total number of artists with an audience interested in this brand.
+                      artists:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Chartmetric artist ID. May be returned as a string or number.
+                            code2:
+                              type:
+                              - string
+                              - 'null'
+                              minLength: 2
+                              maxLength: 2
+                              description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist name.
+                            genres:
+                              type: array
+                              items:
+                                type: string
+                              description: Up to three smart-ordered genre names for the artist.
+                            image_url:
+                              type:
+                              - string
+                              - 'null'
+                              description: Artist image URL.
+                            instagram_followers:
+                              type: object
+                              properties:
+                                total:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  minimum: 0
+                                  description: Total Instagram followers of the artist.
+                                overlap:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  minimum: 0
+                                  description: Followers of the artist whose audience is interested in this brand.
+                                overlap_percent:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: Share of the artist's followers interested in this brand (0–1).
+                                affinity:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: Affinity of the artist's follower base toward the brand vs. the average artist (1.0 = average).
+                              description: Instagram follower overlap and affinity stats for the artist's audience.
+                            instagram_likers:
+                              type: object
+                              properties:
+                                average:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  minimum: 0
+                                  description: Average Instagram likes per post for the artist.
+                                overlap:
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  minimum: 0
+                                  description: Likers of the artist's posts whose audience is interested in this brand.
+                                overlap_percent:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: Share of the artist's likers interested in this brand (0–1).
+                                affinity:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: Affinity of the artist's liker base toward the brand vs. the average artist (1.0 = average).
+                              description: Instagram liker overlap and affinity stats for the artist's audience.
+                          required:
+                          - id
+                          - genres
+                        description: Artists ranked by the requested `sortColumn`, paginated by `limit`/`offset`.
+                    required:
+                    - total
+                    - artists
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      brandName: Apple
+                      total: 98864
+                      artists:
+                      - id: '74419'
+                        code2: US
+                        name: XXXTENTACION
+                        genres:
+                        - Hip-Hop/Rap
+                        - Pop
+                        image_url: https://rovimusic.rovicorp.com/image.jpg?c=yuv5C_kbffM_HzyztzV8fAJZhG49AlXxcRVo_RfD3cE=&f=4
+                        instagram_followers:
+                          total: 20578742
+                          overlap: 1858034
+                          overlap_percent: 0.09028899822933782
+                          affinity: 1.07031695578559
+                        instagram_likers:
+                          average: 29561689
+                          overlap: 1776398
+                          overlap_percent: 0.060091221445432295
+                          affinity: 0.9514696637904785
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}

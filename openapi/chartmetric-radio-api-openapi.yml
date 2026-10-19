@@ -1,0 +1,1153 @@
+openapi: 3.2.0
+info:
+  title: Chartmetric Developer Radio API
+  description: 'Public API documentation for the Chartmetric Developer API.
+
+
+    ## Credit consumption
+
+
+    On the Prepaid API plan every request consumes API credits. Most endpoints cost
+
+    **1 credit** per request. Premium endpoints — labelled `💎 Premium` in their title —
+
+    return higher-cost audience and playlist data and consume **2 credits** per request:
+
+
+    - `GET /api/artist/{id}/instagram-audience-stats`
+
+    - `GET /api/artist/{id}/instagram-audience-stats/dates`
+
+    - `GET /api/artist/{id}/social-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-audience-stats`
+
+    - `GET /api/artist/{id}/tiktok-influencer-stats`
+
+    - `GET /api/artist/{id}/tiktok-top-influencers`
+
+    - `GET /api/artist/{id}/tiktok-top-videos`
+
+    - `GET /api/artist/{id}/where-people-listen`
+
+    - `GET /api/artist/{id}/youtube-audience-stats`
+
+    - `GET /api/artist/{id}/{platform}/{status}/playlists`
+
+    - `GET /api/brand/v2/{brandId}/audience`
+
+    - `GET /api/track/{id}/tiktok-influencer-stats`
+
+    - `GET /api/track/{id}/tiktok-top-influencers`
+
+    - `GET /api/track/{id}/tiktok-top-sounds`
+
+    - `GET /api/track/{id}/topVideos`
+
+
+    Credits are deducted when the request is received, regardless of the number of rows
+
+    returned. Your remaining balance and the current per-endpoint costs are shown in your
+
+    Chartmetric account under Settings → API Usage. Fixed-rate monthly API plans are not
+
+    billed per request; they are limited by their request rate instead.'
+  version: 1.0.1589
+  contact:
+    name: Chartmetric API Support
+    email: backend-engineering@chartmetric.com
+servers:
+- url: https://api.chartmetric.com
+  description: Production
+security:
+- BearerAuth: []
+tags:
+- name: Radio
+  description: Radio airplay data for artists and tracks. Endpoints return airplay time series, total airplay counts overall, by entity and by broadcast market, and the radio station list for a country.
+paths:
+  /api/radio/{type}/{id}/airplay-totals:
+    get:
+      summary: Total Airplays
+      tags:
+      - Radio
+      operationId: getRadioAirplayTotals
+      description: Returns total airplay counts grouped by country, city, station, and track for the given `artist`, `album`, or `track`. **Deprecated** — prefer `GET /api/radio/{type}/{id}/airplay-totals/{entity}` for per-entity pagination.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        required: true
+        description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        examples:
+          default:
+            value: 1
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - artist
+          - track
+          - album
+          description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        required: true
+        description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        examples:
+          default:
+            value: artist
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start date for aggregating airplay totals in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+          default: '2026-04-22'
+        required: true
+        description: Start date for aggregating airplay totals in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+        examples:
+          default:
+            value: '2026-04-22'
+      - name: station
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric radio station ID; when set, narrows results to plays on this station only.
+        required: false
+        description: Chartmetric radio station ID; when set, narrows results to plays on this station only.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum entries returned per group (countries/cities/stations/tracks).
+          default: 10
+        required: false
+        description: Maximum entries returned per group (countries/cities/stations/tracks).
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      countries:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            anyOf:
+                            - type: object
+                              properties:
+                                code2:
+                                  type: string
+                                  minLength: 2
+                                  maxLength: 2
+                                  description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Country name.
+                                plays:
+                                  anyOf:
+                                  - type: string
+                                  - type: number
+                                    format: float
+                                  description: Total airplays in this country across the requested period.
+                                plays_percent:
+                                  type: number
+                                  format: float
+                                  description: Country's share of total airplays as a fraction in [0, 1].
+                                station_count:
+                                  type: integer
+                                  description: Distinct stations in this country that aired the entity. Omitted for `track`.
+                                top_station_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Name of the top-airing station in this country. Omitted for `track`.
+                              required:
+                              - code2
+                              - name
+                              - plays
+                              - plays_percent
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  air_date:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Date of the play count bucket. ISO 8601 string by default; UTC epoch seconds when `dateFormat=UNIX`.
+                                  count:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Number of spins on `air_date`. May be a numeric string from Postgres aggregates.
+                                required:
+                                - air_date
+                                - count
+                          minItems: 2
+                          maxItems: 2
+                        description: Per-country airplay totals as `[infoObject, trendsArray]` tuples.
+                      cities:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            anyOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric city ID.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: City name.
+                                code2:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  minLength: 2
+                                  maxLength: 2
+                                  description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                                country:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Country name of the city.
+                                lat:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: City latitude in decimal degrees.
+                                lng:
+                                  type:
+                                  - number
+                                  - 'null'
+                                  format: float
+                                  description: City longitude in decimal degrees.
+                                plays:
+                                  anyOf:
+                                  - type: string
+                                  - type: number
+                                    format: float
+                                  description: Total airplays in this city across the requested period.
+                                plays_percent:
+                                  type: number
+                                  format: float
+                                  description: City's share of total airplays as a fraction in [0, 1].
+                                station_count:
+                                  type: integer
+                                  description: Distinct stations in this city that aired the entity. Omitted for `track`.
+                                top_station_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Name of the top-airing station in this city. Omitted for `track`.
+                              required:
+                              - id
+                              - name
+                              - code2
+                              - country
+                              - lat
+                              - lng
+                              - plays
+                              - plays_percent
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  air_date:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Date of the play count bucket. ISO 8601 string by default; UTC epoch seconds when `dateFormat=UNIX`.
+                                  count:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Number of spins on `air_date`. May be a numeric string from Postgres aggregates.
+                                required:
+                                - air_date
+                                - count
+                          minItems: 2
+                          maxItems: 2
+                        description: Per-city airplay totals as `[infoObject, trendsArray]` tuples.
+                      stations:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            anyOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric radio station ID.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Radio station name.
+                                code2:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  minLength: 2
+                                  maxLength: 2
+                                  description: ISO 3166-1 alpha-2 country code where the station broadcasts.
+                                city:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: City the station broadcasts from.
+                                country:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Country the station broadcasts from.
+                                plays:
+                                  anyOf:
+                                  - type: string
+                                  - type: number
+                                    format: float
+                                  description: Total airplays on this station across the requested period.
+                                plays_percent:
+                                  type: number
+                                  format: float
+                                  description: Station's share of total airplays as a fraction in [0, 1].
+                              required:
+                              - id
+                              - name
+                              - code2
+                              - city
+                              - country
+                              - plays
+                              - plays_percent
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  air_date:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Date of the play count bucket. ISO 8601 string by default; UTC epoch seconds when `dateFormat=UNIX`.
+                                  count:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Number of spins on `air_date`. May be a numeric string from Postgres aggregates.
+                                required:
+                                - air_date
+                                - count
+                          minItems: 2
+                          maxItems: 2
+                        description: Per-station airplay totals as `[infoObject, trendsArray]` tuples.
+                      tracks:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            anyOf:
+                            - type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 2147483647
+                                  description: Chartmetric track ID.
+                                name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Track title.
+                                isrc:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: International Standard Recording Code of the track.
+                                plays:
+                                  anyOf:
+                                  - type: string
+                                  - type: number
+                                    format: float
+                                  description: Total airplays for this track across the requested period.
+                                plays_percent:
+                                  type: number
+                                  format: float
+                                  description: Track's share of total airplays as a fraction in [0, 1].
+                                station_count:
+                                  type: integer
+                                  description: Distinct stations that aired this track. Returned for artist/album scopes.
+                                top_station_name:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Name of the top-airing station for this track. Returned for artist/album scopes.
+                              required:
+                              - id
+                              - name
+                              - isrc
+                              - plays
+                              - plays_percent
+                            - type: array
+                              items:
+                                type: object
+                                properties:
+                                  air_date:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Date of the play count bucket. ISO 8601 string by default; UTC epoch seconds when `dateFormat=UNIX`.
+                                  count:
+                                    anyOf:
+                                    - type: string
+                                    - type: number
+                                      format: float
+                                    description: Number of spins on `air_date`. May be a numeric string from Postgres aggregates.
+                                required:
+                                - air_date
+                                - count
+                          minItems: 2
+                          maxItems: 2
+                        description: Per-track airplay totals as `[infoObject, trendsArray]` tuples. Returned for artist/album scopes.
+                    required:
+                    - countries
+                    - cities
+                    - stations
+                    - tracks
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      countries:
+                      - - code2: US
+                          name: United States
+                          plays: 76376
+                          plays_percent: 0.43664886744342934
+                        - - air_date: '2023-01-01T00:00:00.000Z'
+                            count: 932
+                          - air_date: '2023-01-02T00:00:00.000Z'
+                            count: 924
+                      cities:
+                      - - id: 2698
+                          name: Berlin
+                          code2: DE
+                          country: Germany
+                          lat: 52.5218
+                          lng: 13.4015
+                          plays: 6168
+                          plays_percent: 0.03526304355283168
+                        - - air_date: '2023-01-01T00:00:00.000Z'
+                            count: 89
+                      stations:
+                      - - id: 196100
+                          name: ENERGY Romantic
+                          code2: DE
+                          city: Berlin
+                          country: Germany
+                          plays: 1772
+                          plays_percent: 0.010130692797603393
+                        - - air_date: '2023-01-01T00:00:00.000Z'
+                            count: 22
+                      tracks:
+                      - - id: 63926722
+                          name: Easy On Me
+                          isrc: USSM12105970
+                          plays: 44623
+                          plays_percent: 0.25511394170849677
+                        - - air_date: '2023-01-01T00:00:00.000Z'
+                            count: 703
+  /api/radio/{type}/{id}/airplay-totals/{entity}:
+    get:
+      summary: Total Airplays by Entity
+      tags:
+      - Radio
+      operationId: getRadioAirplayTotalsByEntity
+      description: Returns airplay counts for the given `:type` (`artist`, `album`, `track`), grouped by the requested `:entity` (`country`, `city`, `station`, `track`). Each item includes a `plays_trend` time series.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        required: true
+        description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        examples:
+          default:
+            value: 1
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - artist
+          - track
+          - album
+          description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        required: true
+        description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        examples:
+          default:
+            value: artist
+      - name: entity
+        in: path
+        schema:
+          type: string
+          enum:
+          - country
+          - city
+          - station
+          - track
+          description: Grouping dimension for airplay totals (one of `country | city | station | track`).
+        required: true
+        description: Grouping dimension for airplay totals (one of `country | city | station | track`).
+        examples:
+          default:
+            value: country
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start date for aggregating airplay totals in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+          default: '2026-04-22'
+        required: true
+        description: Start date for aggregating airplay totals in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+        examples:
+          default:
+            value: '2026-04-22'
+      - name: station
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric radio station ID; when set, restricts play counts to a single station.
+        required: false
+        description: Chartmetric radio station ID; when set, restricts play counts to a single station.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum entries returned in the `:entity` grouping.
+          default: 10
+        required: false
+        description: Maximum entries returned in the `:entity` grouping.
+      - name: dateFormat
+        in: query
+        schema:
+          type: string
+          enum:
+          - ISO
+          - UNIX
+          description: 'Format of `air_date` in `plays_trend` items: `ISO` for ISO 8601 strings, `UNIX` for UTC epoch seconds.'
+          default: ISO
+        required: false
+        description: 'Format of `air_date` in `plays_trend` items: `ISO` for ISO 8601 strings, `UNIX` for UTC epoch seconds.'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code2:
+                          type: string
+                          minLength: 2
+                          maxLength: 2
+                          description: ISO 3166-1 alpha-2 country code (e.g. 'US'). Present when `:entity` is `country`, `city`, or `station`.
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric ID of the city / station / track. Present when `:entity` is `city`, `station`, or `track`.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Display name of the country / city / station / track.
+                        country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Country name. Present when `:entity` is `city` or `station`.
+                        lat:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Latitude in decimal degrees. Present when `:entity` is `city`.
+                        lng:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Longitude in decimal degrees. Present when `:entity` is `city`.
+                        city:
+                          type:
+                          - string
+                          - 'null'
+                          description: City the station broadcasts from. Present when `:entity` is `station`.
+                        isrc:
+                          type:
+                          - string
+                          - 'null'
+                          description: International Standard Recording Code. Present when `:entity` is `track`.
+                        plays:
+                          anyOf:
+                          - type: string
+                          - type: number
+                            format: float
+                          description: Total airplays for this entity across the requested period.
+                        plays_percent:
+                          type: number
+                          format: float
+                          description: Entity's share of total airplays as a fraction in [0, 1].
+                        plays_trend:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              air_date:
+                                anyOf:
+                                - type: string
+                                - type: number
+                                  format: float
+                                description: Date of the play count bucket. ISO 8601 string by default; UTC epoch seconds when `dateFormat=UNIX`.
+                              count:
+                                anyOf:
+                                - type: string
+                                - type: number
+                                  format: float
+                                description: Number of spins on `air_date`. May be a numeric string from Postgres aggregates.
+                            required:
+                            - air_date
+                            - count
+                          description: Per-day play counts for this entity over the requested period.
+                      required:
+                      - plays
+                      - plays_percent
+                      - plays_trend
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - code2: US
+                      name: United States
+                      plays: 81275
+                      plays_percent: 0.43441659094553425
+                      plays_trend:
+                      - air_date: '2023-01-01'
+                        count: 916
+  /api/radio/{type}/{id}/airplays:
+    get:
+      summary: Airplay information in Time Series
+      tags:
+      - Radio
+      operationId: getRadioAirplays
+      description: Time series of how many times an `artist`, `album`, or `track` played on the radio. `air_date` is returned as a UNIX-epoch-milliseconds timestamp.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        required: true
+        description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        examples:
+          default:
+            value: 1
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - artist
+          - track
+          - album
+          description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        required: true
+        description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        examples:
+          default:
+            value: artist
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start date of the time series in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+          default: '2026-04-22'
+        required: true
+        description: Start date of the time series in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+        examples:
+          default:
+            value: '2026-04-22'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        air_date:
+                          type: integer
+                          minimum: 0
+                          description: Timestamp of the day bucket as a UTC Unix epoch in milliseconds.
+                        spins:
+                          type: integer
+                          minimum: 0
+                          description: Number of plays (spins) recorded on `air_date`.
+                      required:
+                      - air_date
+                      - spins
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - air_date: 1665964800000
+                      spins: 6
+                    - air_date: 1666051200000
+                      spins: 7
+  /api/radio/{type}/{id}/broadcast-markets:
+    get:
+      summary: Broadcast Market play counts
+      tags:
+      - Radio
+      operationId: getRadioBroadcastMarkets
+      description: Returns play counts per broadcast market (country and city) for an `artist`, `album`, or `track`. Aggregate counts come from Postgres and are returned as decimal strings.
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        required: true
+        description: Chartmetric ID for the entity in `:type` (artist / album / track ID).
+        examples:
+          default:
+            value: 1
+      - name: type
+        in: path
+        schema:
+          type: string
+          enum:
+          - artist
+          - track
+          - album
+          description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        required: true
+        description: Entity kind that `:id` refers to (one of `artist | album | track`).
+        examples:
+          default:
+            value: artist
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date
+          description: Start date for aggregating broadcast-market play counts in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+          default: '2026-04-22'
+        required: true
+        description: Start date for aggregating broadcast-market play counts in ISO format (e.g. `2025-11-01`); defaults to 180 days ago.
+        examples:
+          default:
+            value: '2026-04-22'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: object
+                    properties:
+                      countryRatios:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            market:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country market name.
+                            market_count_data:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Total airplays for the entity in this country market.
+                            code2:
+                              type: string
+                              minLength: 2
+                              maxLength: 2
+                              description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                            total_market_count_data:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              nullable: true
+                              description: Total airplays in this market across all entities (denominator used to compute `count`).
+                            count_of_stations:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Number of distinct stations contributing to this market.
+                            population:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Estimated population of the country market.
+                            lat:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Country centroid latitude in decimal degrees.
+                            lng:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Country centroid longitude in decimal degrees.
+                            count:
+                              type: number
+                              format: float
+                              description: 'Per-capita play intensity: airplays per 10k population in this market (entity''s market share scaled by population).'
+                          required:
+                          - market
+                          - market_count_data
+                          - code2
+                          - total_market_count_data
+                          - count_of_stations
+                          - population
+                          - lat
+                          - lng
+                          - count
+                        description: Country-level broadcast market entries with airplay counts and station coverage.
+                      cityRatios:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            market:
+                              type:
+                              - string
+                              - 'null'
+                              description: City market name.
+                            display_name:
+                              type:
+                              - string
+                              - 'null'
+                              description: Human-readable market label (e.g. 'Dayton (United States)').
+                            code2:
+                              type: string
+                              minLength: 2
+                              maxLength: 2
+                              description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+                            market_count_data:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Total airplays for the entity in this city market.
+                            country:
+                              type:
+                              - string
+                              - 'null'
+                              description: Country name of the city.
+                            total_market_count_data:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              nullable: true
+                              description: Total airplays in this market across all entities (denominator used to compute `count`).
+                            count_of_stations:
+                              anyOf:
+                              - type: string
+                              - type: number
+                                format: float
+                              description: Number of distinct stations contributing to this city market.
+                            city_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 2147483647
+                              description: Chartmetric city ID.
+                            population:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: Estimated population of the city.
+                            lat:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: City latitude in decimal degrees.
+                            lng:
+                              type:
+                              - number
+                              - 'null'
+                              format: float
+                              description: City longitude in decimal degrees.
+                            count:
+                              type: number
+                              format: float
+                              description: 'Per-capita play intensity: airplays per 10k population in this market (entity''s market share scaled by population).'
+                          required:
+                          - market
+                          - display_name
+                          - code2
+                          - market_count_data
+                          - country
+                          - total_market_count_data
+                          - count_of_stations
+                          - city_id
+                          - population
+                          - lat
+                          - lng
+                          - count
+                        description: City-level broadcast market entries with airplay counts and station coverage.
+                    required:
+                    - countryRatios
+                    - cityRatios
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                      countryRatios:
+                      - market: Malaysia
+                        market_count_data: '1155'
+                        code2: MY
+                        total_market_count_data: '63226'
+                        count_of_stations: '5'
+                        population: 22244000
+                        lat: 4.210484
+                        lng: 101.975766
+                        count: 1.82678012210167
+                      cityRatios:
+                      - market: Dayton
+                        display_name: Dayton (United States)
+                        code2: US
+                        market_count_data: '300'
+                        country: United States
+                        total_market_count_data: '9778'
+                        count_of_stations: '1'
+                        city_id: 6869
+                        population: 5449
+                        lat: 39.1128
+                        lng: -84.464
+                        count: 3.06811208836163
+  /api/radio/station-list:
+    get:
+      summary: Get Radio Station List for Country
+      tags:
+      - Radio
+      operationId: listRadioStations
+      description: Returns the list of stations along with metadata for a given country (2-letter code). Station social-media counts come from a LEFT JOIN and may be null.
+      parameters:
+      - name: code2
+        in: query
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+        required: false
+        description: ISO 3166-1 alpha-2 country code (2 letters, e.g. 'US', 'BR', 'GB').
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obj:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          minimum: 0
+                          maximum: 2147483647
+                          description: Chartmetric radio station ID.
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Station callsign or display name.
+                        genre:
+                          type:
+                          - string
+                          - 'null'
+                          description: Station format / genre (e.g. 'Hot AC', 'News/Talk').
+                        frequency:
+                          type:
+                          - string
+                          - 'null'
+                          description: Dial position (e.g. `104.3` for FM, `1010` for AM).
+                        market:
+                          type:
+                          - string
+                          - 'null'
+                          description: Primary broadcast market the station serves.
+                        broadcast_area:
+                          type:
+                          - string
+                          - 'null'
+                          description: Geographic area covered by the station signal.
+                        country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Country the station broadcasts from.
+                        station_state:
+                          type:
+                          - string
+                          - 'null'
+                          description: Two-letter state or province code (e.g. `CA`, `NY`).
+                        image_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of the station logo or image asset.
+                        aqh:
+                          type:
+                          - integer
+                          - 'null'
+                          description: 'Average Quarter-Hour persons: unique listeners tuning in for >5 minutes within a 15-minute window. Available for US stations only.'
+                        platform:
+                          type:
+                          - string
+                          - 'null'
+                          description: Distribution platform of the station (e.g. 'Terrestrial', 'Satellite', 'Online').
+                        facebook_followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Followers on the station's Facebook page. Null when the station has no linked Facebook account.
+                        facebook_likes:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Likes on the station's Facebook page. Null when the station has no linked Facebook account.
+                        instagram_followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Followers on the station's Instagram account. Null when the station has no linked Instagram account.
+                        twitter_followers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Followers on the station's Twitter/X account. Null when the station has no linked Twitter account.
+                        wikipedia_views:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Pageviews on the station's Wikipedia article. Null when the station has no linked Wikipedia page.
+                      required:
+                      - id
+                      - name
+                required:
+                - obj
+                additionalProperties: false
+              examples:
+                default:
+                  value:
+                    obj:
+                    - id: 214403
+                      name: KBIG 104.3 MYfm
+                      genre: Hot AC
+                      frequency: '104.3'
+                      market: Los Angeles
+                      broadcast_area: Los Angeles
+                      country: United States
+                      station_state: CA
+                      image_url: https://storage.googleapis.com/cm-app-assets/radio-images/2627_KBIG_FM.png
+                      aqh: 65700
+                      platform: Terrestrial
+                      facebook_followers: null
+                      facebook_likes: null
+                      instagram_followers: 33094
+                      twitter_followers: 27228
+                      wikipedia_views: 44
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from /api/token
+x-ext-urls: {}
