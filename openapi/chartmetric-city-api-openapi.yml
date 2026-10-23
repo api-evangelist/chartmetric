@@ -1070,3 +1070,9 @@ components:
       bearerFormat: JWT
       description: JWT access token obtained from /api/token
 x-ext-urls: {}
+x-provenance:
+  method: harvested
+  publisher: Chartmetric
+  source: https://apidocs.chartmetric.com/reference/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
