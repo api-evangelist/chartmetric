@@ -116,6 +116,8 @@ apis:
   humanURL: https://apidocs.chartmetric.com/
   baseURL: https://api.chartmetric.com/api
   tags:
+  - Artists
+  tags_raw:
   - Artist
   properties:
   - type: OpenAPI
@@ -136,6 +138,8 @@ apis:
   humanURL: https://apidocs.chartmetric.com/
   baseURL: https://api.chartmetric.com/api
   tags:
+  - Brands
+  tags_raw:
   - Brand
   properties:
   - type: OpenAPI
@@ -335,6 +339,8 @@ apis:
   humanURL: https://apidocs.chartmetric.com/
   baseURL: https://api.chartmetric.com/api
   tags:
+  - Tokens
+  tags_raw:
   - Token
   properties:
   - type: OpenAPI
