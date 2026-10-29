@@ -1,4 +1,4 @@
-# Chartmetric (chartmetric)
+# Chartmetric
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,181 +66,136 @@
 
 Chartmetric is a music analytics and artist-intelligence platform. Its REST API exposes the company's catalog of artists, tracks, albums, playlists, and charts along with cross-platform streaming, social, and radio statistics across Spotify, Apple Music, YouTube, TikTok, Instagram, and more, plus a unified search endpoint.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/chartmetric/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/chartmetric/refs/heads/main/apis.yml)
+**Areas:** Music · Analytics · Artist Intelligence · Streaming · Charts
 
-## Tags
+## Chartmetric on APIs.io
 
-- Music
-- Analytics
-- Artist Intelligence
-- Streaming
-- Charts
+Everything profiled for Chartmetric is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/chartmetric/](https://apis.io/providers/chartmetric/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (7)
 
-- **Created:** 2026-06-21
-- **Modified:** 2026-06-21
+- [Chartmetric Albums API](https://apis.io/apis/chartmetric/chartmetric-albums-api/) — Album metadata, tracks, followers, charts, and placements.
+- [Chartmetric Artists API](https://apis.io/apis/chartmetric/chartmetric-artists-api/) — Artist metadata, stats, related artists, and placements.
+- [Chartmetric Authentication API](https://apis.io/apis/chartmetric/chartmetric-authentication-api/) — Exchange a refresh token for a short-lived access token.
+- [Chartmetric Charts API](https://apis.io/apis/chartmetric/chartmetric-charts-api/) — Platform chart rankings and Chartmetric Score (cm-score).
+- [Chartmetric Playlists API](https://apis.io/apis/chartmetric/chartmetric-playlists-api/) — Playlist metadata, track listings, snapshots, and evolution.
+- [Chartmetric Search API](https://apis.io/apis/chartmetric/chartmetric-search-api/) — Unified entity search.
+- [Chartmetric Tracks API](https://apis.io/apis/chartmetric/chartmetric-tracks-api/) — Track metadata, stats, charts, and playlist placements.
 
-## APIs
+### Published properties
 
-### Chartmetric Artists API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Artist metadata, cross-platform stats, related artists, where-people-listen geography, artist tracks and albums, playlist placements, and ID resolution for artists tracked by Chartmetric.
+#### MCP servers (1)
 
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
+Model Context Protocol servers that expose the API to agents.
 
-#### Tags
+- [chartmetric](https://apis.io/servers/chartmetric/chartmetric/)
 
-- Artists
-- Metadata
-- Stats
+#### Agentic access (1)
 
-#### Properties
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Chartmetric Agentic Access](https://apis.io/agentic-access/chartmetric/chartmetric-agentic-access/)
 
-### Chartmetric Tracks API
+#### Collections (8)
 
-Track metadata, per-platform streaming stats, chart history, playlist placement and snapshots, and ID resolution for tracks across Spotify, Apple Music, YouTube, and other platforms.
+Postman and Open Collection request collections.
 
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
+- [Chartmetric API](https://apis.io/collections/chartmetric/open-chartmetric/)
+- [Chartmetric Albums API](https://apis.io/collections/chartmetric/open-chartmetric-albums-api/)
+- [Chartmetric Albums Artists API](https://apis.io/collections/chartmetric/open-chartmetric-artists-api/)
+- [Chartmetric Albums Authentication API](https://apis.io/collections/chartmetric/open-chartmetric-authentication-api/)
+- [Chartmetric Albums Charts API](https://apis.io/collections/chartmetric/open-chartmetric-charts-api/)
+- [Chartmetric Albums Playlists API](https://apis.io/collections/chartmetric/open-chartmetric-playlists-api/)
+- [Chartmetric Albums Search API](https://apis.io/collections/chartmetric/open-chartmetric-search-api/)
+- [Chartmetric Albums Tracks API](https://apis.io/collections/chartmetric/open-chartmetric-tracks-api/)
 
-#### Tags
+#### Security (2)
 
-- Tracks
-- Metadata
-- Stats
+Authentication, trust centre, and vulnerability disclosure.
 
-#### Properties
+- [Chartmetric Authentication](https://apis.io/security/chartmetric/chartmetric-authentication/)
+- [Chartmetric Domain Security](https://apis.io/security/chartmetric/chartmetric-domain-security/)
 
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Plans and pricing (1)
 
-### Chartmetric Albums API
+Published plans, tiers and prices.
 
-Album metadata, album tracks, per-platform follower and chart data, playlist placements, and ID resolution for albums tracked by Chartmetric.
+- [Chartmetric Plans Pricing](https://apis.io/plans/chartmetric/chartmetric-plans-pricing/)
 
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
+#### Rate limits (1)
 
-#### Tags
+Published request limits.
 
-- Albums
-- Metadata
-- Stats
+- [Chartmetric Rate Limits](https://apis.io/rate-limits/chartmetric/chartmetric-rate-limits/)
 
-#### Properties
+#### FinOps (1)
 
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+What the API costs to run, by operation.
 
-### Chartmetric Playlists API
+- [Chartmetric Finops](https://apis.io/finops/chartmetric/chartmetric-finops/)
 
-Playlist metadata, current and historical track listings, playlist snapshots, evolution over time, and per-platform playlist lists across Spotify, Apple Music, Deezer, and Amazon.
+## Where to find this API
 
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-#### Tags
-
-- Playlists
-- Curators
-- Tracks
-
-#### Properties
-
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Chartmetric Charts API
-
-Platform chart rankings across Spotify, Apple Music, YouTube, Shazam, iTunes, Deezer, SoundCloud, Beatport, Amazon, and QQ, plus Chartmetric Score (cm-score) rankings for artists, tracks, and albums.
-
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
-
-#### Tags
-
-- Charts
-- Rankings
-- Platforms
-
-#### Properties
-
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Chartmetric Stats and Metrics API
-
-Time-series streaming and social statistics for artists, tracks, and albums by data source (Spotify, Apple Music, YouTube, TikTok, Instagram, and others), including follower counts, listeners, and engagement metrics.
-
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
-
-#### Tags
-
-- Stats
-- Metrics
-- Streaming
-
-#### Properties
-
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Chartmetric Search API
-
-Unified search across artists, tracks, albums, playlists, curators, and other entities by free-text query, returning Chartmetric IDs for follow-on metadata and stats lookups.
-
-- **Human URL:** [https://apidocs.chartmetric.com/](https://apidocs.chartmetric.com/)
-- **Base URL:** `https://api.chartmetric.com/api`
-
-#### Tags
-
-- Search
-- Discovery
-- Entities
-
-#### Properties
-
-- [Documentation](https://apidocs.chartmetric.com/)
-- [API Reference](https://api.chartmetric.com/apidoc/)
-- [OpenAPI](openapi/chartmetric-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chartmetric.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chartmetric.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/chartmetric)
-- [LinkedIn](https://www.linkedin.com/company/chartmetric)
 - [Website](https://www.chartmetric.com)
 - [Documentation](https://apidocs.chartmetric.com/)
-- [Plans](plans/chartmetric-plans-pricing.yml)
-- [Rate Limits](rate-limits/chartmetric-rate-limits.yml)
-- [Fin Ops](finops/chartmetric-finops.yml)
+- [Blog](https://hmc.chartmetric.com/feed)
+- [GitHub](https://github.com/chartmetric)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 27.8** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 51.4 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 7.9 |
+
+**Agent readiness 50.6** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | paginated |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 11.8** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/chartmetric/](https://apis.io/providers/chartmetric/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Chartmetric: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/chartmetric/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
